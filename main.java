@@ -18,6 +18,7 @@ public class main {
                     if (binaryCode != -1) {
                         System.out.printf(Integer.toBinaryString(binaryCode));
                     }
+                    // something
                 } catch (Exception e) {
                     System.err.println("Error parsing line: " + line);
                     System.err.println("  " + e.getMessage());
