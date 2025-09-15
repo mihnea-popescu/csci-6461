@@ -11,7 +11,7 @@ public class main {
 
     public static void main(String[] args) {
         try {
-            List<String> lines = readAllLines("input_file.txt");
+            List<String> lines = readAllLines("input.txt");
             for (String line : lines) {
                 try {
                     int binaryCode = InputParser.parseLine(line);

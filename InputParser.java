@@ -4,9 +4,9 @@ import java.util.HashMap;
 public class InputParser {
     private static final Map<String, Integer> OPCODES = new HashMap<>();
 
-    static {
-        OPCODES.put("HLT", 0b000000);
-    }
+//    static {
+//        OPCODES.put("HLT", 0b000000);
+//    }
 
     public static int parseLine(String line) {
         // Remove comments
@@ -27,15 +27,31 @@ public class InputParser {
             throw new IllegalArgumentException("Unknown opcode: " + mnemonic);
         }
 
-        int opcode = OPCODES.get(mnemonic);
+        int opcode;
+
+        String[] operands = parts[1].split(",");
+
+
+        int instruction = 0;
 
         switch (mnemonic){
             case "HLT":
+                opcode = 0b000000;
                 return opcode << 10; // opcode in top 6 bits
             // mihnea
             case "TRAP":
-                break;
+                opcode = 0b11110;
+                return opcode << 10;
             case "LDR":
+                opcode = 0b000001;
+
+                int r = Integer.parseInt(operands[0].trim());
+                int ix = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int address = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                // Building the final 16-bit word
+                instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "STR":
                 break;
@@ -114,14 +130,7 @@ public class InputParser {
 
 
         // Parse all the operands
-        String[] operands = parts[1].split(",");
-        int r = Integer.parseInt(operands[0].trim());
-        int ix = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
-        int address = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
-        int i = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
 
-        // Building the final 16-bit word
-        int instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
 
         return instruction;
     }
