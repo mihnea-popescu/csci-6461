@@ -25,7 +25,7 @@ public class main {
                         System.out.println(binaryString);
                         outputLines.add(binaryString);
                     }
-
+                    // something
                 } catch (Exception e) {
                     System.err.println("Error parsing line: " + line);
                     System.err.println("  " + e.getMessage());
