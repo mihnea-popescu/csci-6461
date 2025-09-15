@@ -76,6 +76,12 @@ public class InputParser {
                 break;
                 // apurva
             case "MLT":
+                opcode = 0b101;
+                        int rx = 0b010;
+                int ry = 0b0000;
+
+                instruction = (opcode << 12) | (rx <<  8) | (ry << 4);
+
                 break;
             case "DVD":
                 break;
