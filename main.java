@@ -6,13 +6,16 @@ import java.util.List;
 
 public class main {
 
+    public static String inputFileName = "input.txt";
+    public static String outputFileName = "output.txt";
+
     public static List<String> readAllLines(String filePath) throws IOException {
         return Files.readAllLines(Paths.get(filePath));
     }
 
     public static void main(String[] args) {
         try {
-            List<String> lines = readAllLines("input.txt");
+            List<String> lines = readAllLines(inputFileName);
 
             List<String> outputLines = new ArrayList<>();
 
@@ -21,7 +24,8 @@ public class main {
                     int binaryCode = InputParser.parseLine(line);
 
                     if(binaryCode != -1) {
-                        String binaryString = Integer.toBinaryString(binaryCode);
+                        // Make sure it is 16-bit
+                        String binaryString = String.format("%16s", Integer.toBinaryString(binaryCode)).replace(' ', '0');
                         System.out.println(binaryString);
                         outputLines.add(binaryString);
                     }
@@ -33,7 +37,7 @@ public class main {
             }
 
             // Write all processed lines to output.txt, overwriting the file
-            Files.write(Paths.get("output.txt"), outputLines);
+            Files.write(Paths.get(outputFileName), outputLines);
         } catch (IOException e) {
             System.err.println("Error reading/writing file: " + e.getMessage());
         }
