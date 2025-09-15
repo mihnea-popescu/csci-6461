@@ -74,8 +74,38 @@ public class InputParser {
                 break;
             case "TRR":
                 break;
-            
-
+            case "AND":
+                break;
+            case "ORR":
+                break;
+            case "NOT":
+                break;
+            case "SRC":
+                break;
+            case "RRC":
+                break;
+            case "IN":
+                break;
+            case "OUT":
+                break;
+            case "CHK":
+                break;
+            case "FADD":
+                break;
+            case "FSUB":
+                break;
+            case "VADD":
+                break;
+            case "VSUB":
+                break;
+            case "CNVRT":
+                break;
+            case "LDFR":
+                break;
+            case "STFR":
+                break;
+            default:
+                break;
         }
 
 
