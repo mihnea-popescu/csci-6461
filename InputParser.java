@@ -32,6 +32,7 @@ public class InputParser {
         switch (mnemonic){
             case "HLT":
                 return opcode << 10; // opcode in top 6 bits
+            // mihnea
             case "TRAP":
                 break;
             case "LDR":
@@ -50,6 +51,7 @@ public class InputParser {
                 break;
             case "JCC":
                 break;
+                // james
             case "JMA":
                 break;
             case "JSR":
@@ -68,6 +70,7 @@ public class InputParser {
                 break;
             case "SIR":
                 break;
+                // apurva
             case "MLT":
                 break;
             case "DVD":
@@ -86,6 +89,7 @@ public class InputParser {
                 break;
             case "IN":
                 break;
+                // sinchana
             case "OUT":
                 break;
             case "CHK":
