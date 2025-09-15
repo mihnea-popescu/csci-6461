@@ -1,12 +1,5 @@
-import java.util.Map;
-import java.util.HashMap;
 
 public class InputParser {
-    private static final Map<String, Integer> OPCODES = new HashMap<>();
-
-//    static {
-//        OPCODES.put("HLT", 0b000000);
-//    }
 
     public static int parseLine(String line) {
         // Remove comments
@@ -23,14 +16,9 @@ public class InputParser {
         String[] parts = line.split("\\s+", 2);
         String mnemonic = parts[0].toUpperCase();
 
-        if (!OPCODES.containsKey(mnemonic)) {
-            throw new IllegalArgumentException("Unknown opcode: " + mnemonic);
-        }
-
         int opcode;
 
         String[] operands = parts[1].split(",");
-
 
         int instruction = 0;
 
