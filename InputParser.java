@@ -29,9 +29,55 @@ public class InputParser {
 
         int opcode = OPCODES.get(mnemonic);
 
-        if (mnemonic.equals("HLT")) {
-            return opcode << 10; // opcode in top 6 bits
+        switch (mnemonic){
+            case "HLT":
+                return opcode << 10; // opcode in top 6 bits
+            case "TRAP":
+                break;
+            case "LDR":
+                break;
+            case "STR":
+                break;
+            case "LDA":
+                break;
+            case "LDX":
+                break;
+            case "STX":
+                break;
+            case "JZ":
+                break;
+            case "JNE":
+                break;
+            case "JCC":
+                break;
+            case "JMA":
+                break;
+            case "JSR":
+                break;
+            case "RFS":
+                break;
+            case "SOB":
+                break;
+            case "JGE":
+                break;
+            case "AMR":
+                break;
+            case "SMR":
+                break;
+            case "AIR":
+                break;
+            case "SIR":
+                break;
+            case "MLT":
+                break;
+            case "DVD":
+                break;
+            case "TRR":
+                break;
+            
+
         }
+
 
         // Parse all the operands
         String[] operands = parts[1].split(",");
