@@ -154,8 +154,18 @@ public class InputParser {
                 break;
                 // sinchana
             case "OUT":
+                opcode = 0b111110;  // 62
+                int r_out = Integer.parseInt(operands[0].trim());      // register r
+                int devid_out = Integer.parseInt(operands[1].trim());  // device id
+
+                instruction = (opcode << 10) | (r_out << 8) | (devid_out & 0x1F);
                 break;
             case "CHK":
+                opcode = 0b111111;  // 63
+                int r_chk = Integer.parseInt(operands[0].trim());      // register r
+                int devid_chk = Integer.parseInt(operands[1].trim());  // device id
+
+                instruction = (opcode << 10) | (r_chk << 8) | (devid_chk & 0x1F);
                 break;
             case "FADD":
                 break;
