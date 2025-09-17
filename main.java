@@ -11,12 +11,12 @@ public class main {
 
     public static void main(String[] args) {
         try {
-            List<String> lines = readAllLines("input.txt");
+            List<String> lines = readAllLines("test.txt");
             for (String line : lines) {
                 try {
                     int binaryCode = InputParser.parseLine(line);
                     if (binaryCode != -1) {
-                        System.out.printf(Integer.toBinaryString(binaryCode));
+                        System.out.println(Integer.toBinaryString(binaryCode));
                     }
                 } catch (Exception e) {
                     System.err.println("Error parsing line: " + line);
