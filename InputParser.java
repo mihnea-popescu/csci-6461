@@ -168,18 +168,67 @@ public class InputParser {
                 instruction = (opcode << 10) | (r_chk << 8) | (devid_chk & 0x1F);
                 break;
             case "FADD":
+                opcode = 0b100001;  // 33
+                int fr_fadd = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
+                int ix_fadd = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int addr_fadd = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i_fadd = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                instruction = (opcode << 10) | (fr_fadd << 8) | (ix_fadd << 6) | (i_fadd << 5) | (addr_fadd & 0x1F);
                 break;
             case "FSUB":
+                opcode = 0b100010;  // 34
+                int fr_fsub = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
+                int ix_fsub = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int addr_fsub = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i_fsub = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                instruction = (opcode << 10) | (fr_fsub << 8) | (ix_fsub << 6) | (i_fsub << 5) | (addr_fsub & 0x1F);              
                 break;
             case "VADD":
+                opcode = 0b100011;  // 35
+                int fr_vadd = Integer.parseInt(operands[0].trim());   // vector length register (0 or 1)
+                int ix_vadd = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int addr_vadd = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i_vadd = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                instruction = (opcode << 10) | (fr_vadd << 8) | (ix_vadd << 6) | (i_vadd << 5) | (addr_vadd & 0x1F);
                 break;
             case "VSUB":
+                opcode = 0b100100;  // 36
+                int fr_vsub = Integer.parseInt(operands[0].trim());   // vector length register (0 or 1)
+                int ix_vsub = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int addr_vsub = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i_vsub = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                instruction = (opcode << 10) | (fr_vsub << 8) | (ix_vsub << 6) | (i_vsub << 5) | (addr_vsub & 0x1F);
                 break;
             case "CNVRT":
+                opcode = 0b100101;  // 37
+                int r_cnvrt = Integer.parseInt(operands[0].trim());
+                int ix_cnvrt = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int addr_cnvrt = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i_cnvrt = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                instruction = (opcode << 10) | (r_cnvrt << 8) | (ix_cnvrt << 6) | (i_cnvrt << 5) | (addr_cnvrt & 0x1F);
                 break;
             case "LDFR":
+                opcode = 0b110010;  // 50
+                int fr_ldfr = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
+                int ix_ldfr = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int addr_ldfr = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i_ldfr = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                instruction = (opcode << 10) | (fr_ldfr << 8) | (ix_ldfr << 6) | (i_ldfr << 5) | (addr_ldfr & 0x1F);
                 break;
             case "STFR":
+                opcode = 0b110011;  // 51
+                int fr_stfr = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
+                int ix_stfr = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
+                int addr_stfr = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
+                int i_stfr = (operands.length > 3) ? Integer.parseInt(operands[3].trim()) : 0;
+
+                instruction = (opcode << 10) | (fr_stfr << 8) | (ix_stfr << 6) | (i_stfr << 5) | (addr_stfr & 0x1F);
                 break;
             default:
                 break;
