@@ -7,3 +7,13 @@ LDA 0,0,0       ;R0 GETS 0
 JZ 0,1,0        ;Jump to End if R0 = 0
 LOC 1024
 End: HLT        ;STOP
+
+JMA 3,30        ; James's test case
+JSR 3,30
+RFS 30
+SOB 3,2,30
+JGE 3,2,30
+AMR 3,2,30
+SMR 2,3,30
+AIR 3,30
+SIR 3,30        : test end
