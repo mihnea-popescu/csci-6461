@@ -215,28 +215,72 @@ public class InputParser {
                 break;
                 // apurva
             case "MLT":
-                opcode = 0b101;
-                        int rx = 0b010;
-                int ry = 0b0000;
-
-                instruction = (opcode << 12) | (rx <<  8) | (ry << 4);
-
+                int opcode = 0b01110000;  
+                    int rx = 0b10;          
+                    int ry = 0b00;        
+                   
+                    int instruction = (opcode << 8) | (rx << 6) | (ry << 4);
                 break;
             case "DVD":
+                int opcode = 0b01110001;  
+                    int rx = 0b10;          
+                    int ry = 0b00;         
+                   
+                    int instruction = (opcode << 8) | (rx << 6) | (ry << 4);
+
                 break;
             case "TRR":
+                int opcode = 0b01110010;  
+                    int rx = 0b10;          
+                    int ry = 0b00;         
+                    
+                    int instruction = (opcode << 8) | (rx << 6) | (ry << 4);
+
                 break;
             case "AND":
+                int opcode = 0b01001001;  
+                    int rx = 0b0010;       
+                    int ry = 0b0011;     
+                    
+                    int instruction = (opcode << 8) | (rx << 4) | ry;
+
                 break;
             case "ORR":
+                int opcode = 0b01001010;  
+                    int rx = 0b0010;        
+                    int ry = 0b0011;       
+                    
+                    int instruction = (opcode << 8) | (rx << 4) | ry;
+
                 break;
             case "NOT":
+                int opcode = 0b01001011;  
+                    int rx = 0b0010;       
+                    
+                    int instruction = (opcode << 8) | (rx << 4);
                 break;
             case "SRC":
+                int opcode = 0b00011111;  
+                    int r = 0b0010;          
+                    int count = 0b0011;       
+                    int lr = 0b1;             
+                        
+                    int instruction = (opcode << 8) | (r << 4) | (lr << 3) | (al << 2) | count;
                 break;
             case "RRC":
+                int opcode = 0b00100000;  
+                    int r = 0b0010;         
+                    int count = 0b0011;
+                    int al = 0b1;           
+                    
+                    int instruction = (opcode << 8) | (r << 4) | (lr << 3) | (al << 2) | count;
                 break;
             case "IN":
+                int opcode = 0b00111101;  // IN (61 decimal)
+                    int r = 0b0010;           // R2
+                    int devid = 0b0101;       // Device 5
+                    
+                    int instruction = (opcode << 8) | (r << 4) | devid;
                 break;
                 // sinchana
             case "OUT":
