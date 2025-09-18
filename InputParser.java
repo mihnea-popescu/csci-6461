@@ -276,9 +276,9 @@ public class InputParser {
                     int instruction = (opcode << 8) | (r << 4) | (lr << 3) | (al << 2) | count;
                 break;
             case "IN":
-                int opcode = 0b00111101;  // IN (61 decimal)
-                    int r = 0b0010;           // R2
-                    int devid = 0b0101;       // Device 5
+                int opcode = 0b00111101;  
+                    int r = 0b0010;           
+                    int devid = 0b0101;       
                     
                     int instruction = (opcode << 8) | (r << 4) | devid;
                 break;
