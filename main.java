@@ -24,19 +24,16 @@ public class main {
                     int binaryCode = InputParser.parseLine(line);
 
                     if(binaryCode != -1) {
-                        // Make sure it is 16-bit
                         String binaryString = String.format("%16s", Integer.toBinaryString(binaryCode)).replace(' ', '0');
                         System.out.println(binaryString);
                         outputLines.add(binaryString);
                     }
-                    // something
                 } catch (Exception e) {
                     System.err.println("Error parsing line: " + line);
                     System.err.println("  " + e.getMessage());
                 }
             }
 
-            // Write all processed lines to output.txt, overwriting the file
             Files.write(Paths.get(outputFileName), outputLines);
         } catch (IOException e) {
             System.err.println("Error reading/writing file: " + e.getMessage());
