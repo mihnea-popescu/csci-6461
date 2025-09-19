@@ -16,4 +16,4 @@ JGE 3,2,30
 AMR 3,2,30
 SMR 2,3,30
 AIR 3,30
-SIR 3,30        : test end
+SIR 3,30        ; test end
