@@ -26,7 +26,9 @@ public class main {
                     if(binaryCode != -1) {
                         String binaryString = String.format("%16s", Integer.toBinaryString(binaryCode)).replace(' ', '0');
                         System.out.println(binaryString);
-                        outputLines.add(binaryString);
+                        outputLines.add(
+                                String.format("INPUT: %-70s OUTPUT: %s", line, binaryString)
+                        );
                     }
                 } catch (Exception e) {
                     System.err.println("Error parsing line: " + line);
