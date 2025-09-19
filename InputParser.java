@@ -19,6 +19,11 @@ public class InputParser {
         int opcode;
 
         String[] operands = parts[1].split(",");
+        //remove anything after space or colon
+        /*for (int i = 0; i < operands.length; i++) {
+            operands[i] = operands[i].trim().split("\\s|:")[0];
+        }
+        */
 
         int instruction = 0;
 
@@ -215,28 +220,105 @@ public class InputParser {
                 break;
                 // apurva
             case "MLT":
-                opcode = 0b101;
-                        int rx = 0b010;
-                int ry = 0b0000;
-
-                instruction = (opcode << 12) | (rx <<  8) | (ry << 4);
-
+                opcode = 0b111000;  
+                if (operands.length < 2) {
+                    System.out.println("MLT input error");
+                    return -1;
+                }
+                int rx_mlt = Integer.parseInt(operands[0].trim());
+                int ry_mlt = Integer.parseInt(operands[1].trim());
+                instruction = (opcode << 10) | (rx_mlt << 8) | (ry_mlt << 6);
                 break;
+
             case "DVD":
+                opcode = 0b111001;  
+                if (operands.length < 2) {
+                    System.out.println("DVD input error");
+                    return -1;
+                }
+                int rx_dvd = Integer.parseInt(operands[0].trim());
+                int ry_dvd = Integer.parseInt(operands[1].trim());
+                instruction = (opcode << 10) | (rx_dvd << 8) | (ry_dvd << 6);
                 break;
+
             case "TRR":
+                opcode = 0b111010;  
+                if (operands.length < 2) {
+                    System.out.println("TRR input error");
+                    return -1;
+                }
+                int rx_trr = Integer.parseInt(operands[0].trim());
+                int ry_trr = Integer.parseInt(operands[1].trim());
+                instruction = (opcode << 10) | (rx_trr << 8) | (ry_trr << 6);
                 break;
+
             case "AND":
+                opcode = 0b111011;  
+                if (operands.length < 2) {
+                    System.out.println("AND input error");
+                    return -1;
+                }
+                int rx_and = Integer.parseInt(operands[0].trim());
+                int ry_and = Integer.parseInt(operands[1].trim());
+                instruction = (opcode << 10) | (rx_and << 8) | (ry_and << 6);
                 break;
+
             case "ORR":
+                opcode = 0b111100;  
+                if (operands.length < 2) {
+                    System.out.println("ORR input error");
+                    return -1;
+                }
+                int rx_orr = Integer.parseInt(operands[0].trim());
+                int ry_orr = Integer.parseInt(operands[1].trim());
+                instruction = (opcode << 10) | (rx_orr << 8) | (ry_orr << 6);
                 break;
+
             case "NOT":
+                opcode = 0b111101;  
+                if (operands.length < 1) {
+                    System.out.println("NOT input error");
+                    return -1;
+                }
+                int rx_not = Integer.parseInt(operands[0].trim());
+                instruction = (opcode << 10) | (rx_not << 8);
                 break;
+
             case "SRC":
+                opcode = 0b011111;  
+                if (operands.length < 4) {
+                    System.out.println("SRC input error");
+                    return -1;
+                }
+                int r_src = Integer.parseInt(operands[0].trim());
+                int count_src = Integer.parseInt(operands[1].trim());
+                int lr_src = Integer.parseInt(operands[2].trim());  
+                int al_src = Integer.parseInt(operands[3].trim());  
+                instruction = (opcode << 10) | (r_src << 8) | (lr_src << 7) | (al_src << 6) | (count_src & 0x3F);
                 break;
+
             case "RRC":
+                opcode = 0b100000;  
+                if (operands.length < 4) {
+                    System.out.println("RRC input error");
+                    return -1;
+                }
+                int r_rrc = Integer.parseInt(operands[0].trim());
+                int count_rrc = Integer.parseInt(operands[1].trim());
+                int lr_rrc = Integer.parseInt(operands[2].trim());  
+                int al_rrc = Integer.parseInt(operands[3].trim()); 
+                instruction = (opcode << 10) | (r_rrc << 8) | (lr_rrc << 7) | (al_rrc << 6) | (count_rrc & 0x3F);
                 break;
+
             case "IN":
+                opcode = 0b111101;  
+                if (operands.length < 2) {
+                    System.out.println("IN input error");
+                    return -1;
+                }
+                int r_in = Integer.parseInt(operands[0].trim());
+                int devid_in = Integer.parseInt(operands[1].trim());
+                instruction = (opcode << 10) | (r_in << 8) | (devid_in & 0xFF);
                 break;
                 // sinchana
             case "OUT":
