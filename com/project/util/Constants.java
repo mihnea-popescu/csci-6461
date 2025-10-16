@@ -5,8 +5,8 @@ package com.project.util;
  * given by the project description
  */
 public class Constants {
-    public short WORD_SIZE = 16;
-    public short MEMORY_SIZE = 2048;
-    public short NUM_GPRS = 4;
-    public short NUM_IXRS = 3;
+    public static short WORD_SIZE = 16;
+    public static short MEMORY_SIZE = 2048;
+    public static short NUM_GPRS = 4;
+    public static short NUM_IXRS = 3;
 }

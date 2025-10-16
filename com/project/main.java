@@ -1,4 +1,6 @@
 package com.project;
+import com.project.util.InputParser;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

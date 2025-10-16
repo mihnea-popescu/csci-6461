@@ -1,4 +1,4 @@
-package com.project;
+package com.project.util;
 
 public class InputParser {
 
