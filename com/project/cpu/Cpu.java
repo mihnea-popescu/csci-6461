@@ -2,6 +2,7 @@ package com.project.cpu;
 
 import com.project.instruction.Instruction;
 import com.project.memory.Memory;
+import com.project.memory.exceptions.MemoryAccessException;
 import com.project.util.Constants;
 
 import java.util.Arrays;
@@ -31,12 +32,29 @@ public class Cpu {
         this.mem = mem;
     }
 
+    private short readMemory(int addr) {
+        try {
+            return mem.read(addr);
+        } catch (MemoryAccessException e) {
+            this.handleMemoryError();
+        }
+        return -1;
+    }
+
+    private void writeMemory(int addr, short value) {
+        try {
+            mem.write(addr, value);
+        } catch (MemoryAccessException e) {
+            this.handleMemoryError();
+        }
+    }
+
     // reads the instruction from memory
     public void fetch() {
-        MAR.setValue(PC.getValue());
-        short instruction = mem.read(MAR.getValue()); // interpret the instruction and split it into R, IX, etc
-        IR.setValue(instruction);
-        PC.increment(); // move to next instruction
+            MAR.setValue(PC.getValue());
+            short instruction = readMemory(MAR.getValue()); // interpret the instruction and split it into R, IX, etc
+            IR.setValue(instruction);
+            PC.increment(); // move to next instruction
     }
 
     // extracts the values needed from the instruction
@@ -60,5 +78,19 @@ public class Cpu {
 
        System.out.println("MACHINE FAULT! CODE: " + val + ".");
        System.out.println("CPU Execution has been halted.");
+    }
+
+    private void handleMemoryError() {
+//        MFR.setValue(val);
+
+        // setting the condition code fault bit to indicate a fault
+        int ccVal = CC.getValue();
+        ccVal = ccVal | 0x1000; // set the fourth bit
+        CC.setValue(ccVal);
+
+        this.halted = true;
+
+        System.out.println("MEMORY ERROR!");
+        System.out.println("CPU Execution has been halted.");
     }
 }
