@@ -4,6 +4,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AssemblerSimulatorGUI {
+
+    // === Class-level components ===
+    private JTextArea cacheContent;
+    private JTextArea printer;
+    private JTextField consoleInput;
+    private JTextField binaryOutput;
+    private JTextField octalInput;
+    private JTextField programFile;
+
+    private LabeledTextField[] gprFields = new LabeledTextField[4];
+    private LabeledTextField[] ixrFields = new LabeledTextField[3];
+    private LabeledTextField pcField, marField, mbrField, irField;
+    private LabeledTextField ccField, mfrField;
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new AssemblerSimulatorGUI().createAndShowGUI());
     }
@@ -14,68 +28,74 @@ public class AssemblerSimulatorGUI {
         frame.setSize(1000, 700);
         frame.setLayout(new BorderLayout());
 
-        // Top panel for Registers
+        // === Top panel for Registers ===
         JPanel registerPanel = new JPanel(new GridLayout(4, 1));
         registerPanel.setBorder(BorderFactory.createTitledBorder("Registers"));
 
-        // GPR Panel
+        // GPRs
         JPanel gprPanel = new JPanel(new GridLayout(1, 4));
         gprPanel.setBorder(BorderFactory.createTitledBorder("GPR"));
         for (int i = 0; i < 4; i++) {
-            gprPanel.add(new LabeledTextField("GPR " + i));
+            gprFields[i] = new LabeledTextField("GPR " + i);
+            gprPanel.add(gprFields[i]);
         }
 
-        // IXR Panel
+        // IXRs
         JPanel ixrPanel = new JPanel(new GridLayout(1, 3));
         ixrPanel.setBorder(BorderFactory.createTitledBorder("IXR"));
-        for (int i = 1; i <= 3; i++) {
-            ixrPanel.add(new LabeledTextField("IXR " + i));
+        for (int i = 0; i < 3; i++) {
+            ixrFields[i] = new LabeledTextField("IXR " + (i + 1));
+            ixrPanel.add(ixrFields[i]);
         }
 
-        // PC, MAR, MBR, IR
+        // Control Registers
         JPanel controlRegPanel = new JPanel(new GridLayout(1, 4));
         controlRegPanel.setBorder(BorderFactory.createTitledBorder("Control Registers"));
-        controlRegPanel.add(new LabeledTextField("PC"));
-        controlRegPanel.add(new LabeledTextField("MAR"));
-        controlRegPanel.add(new LabeledTextField("MBR"));
-        controlRegPanel.add(new LabeledTextField("IR"));
+        pcField = new LabeledTextField("PC");
+        marField = new LabeledTextField("MAR");
+        mbrField = new LabeledTextField("MBR");
+        irField = new LabeledTextField("IR");
+        controlRegPanel.add(pcField);
+        controlRegPanel.add(marField);
+        controlRegPanel.add(mbrField);
+        controlRegPanel.add(irField);
+
+        // CC and MFR
+        JPanel miscPanel = new JPanel(new GridLayout(1, 2));
+        ccField = new LabeledTextField("CC");
+        mfrField = new LabeledTextField("MFR");
+        miscPanel.add(ccField);
+        miscPanel.add(mfrField);
 
         registerPanel.add(gprPanel);
         registerPanel.add(ixrPanel);
         registerPanel.add(controlRegPanel);
-
-        // CC and MFR
-        JPanel miscPanel = new JPanel(new GridLayout(1, 2));
-        miscPanel.add(new LabeledTextField("CC"));
-        miscPanel.add(new LabeledTextField("MFR"));
         registerPanel.add(miscPanel);
 
         frame.add(registerPanel, BorderLayout.NORTH);
 
-        // Center Panel for memory/cache, binary and buttons
+        // === Center panel for memory, input/output, and buttons ===
         JPanel centerPanel = new JPanel(new BorderLayout());
 
-        // Cache + Binary Panel
+        // Memory & Binary Panel
         JPanel memoryPanel = new JPanel(new GridLayout(1, 2));
-        JTextArea cacheContent = new JTextArea(10, 20);
+        cacheContent = new JTextArea(10, 20);
         cacheContent.setBorder(BorderFactory.createTitledBorder("Cache Content"));
         memoryPanel.add(new JScrollPane(cacheContent));
 
-        JPanel binaryPanel = new JPanel(new GridLayout(3, 1));
-        binaryPanel.setBorder(BorderFactory.createTitledBorder("Input"));
-        JTextField octalInput = new JTextField();
-        JTextField binaryOutput = new JTextField();
+        JPanel binaryPanel = new JPanel(new GridLayout(2, 1));
+        octalInput = new JTextField();
+        binaryOutput = new JTextField();
         octalInput.setBorder(BorderFactory.createTitledBorder("Octal Input"));
         binaryOutput.setBorder(BorderFactory.createTitledBorder("Binary Output"));
-
         binaryPanel.add(octalInput);
         binaryPanel.add(binaryOutput);
         memoryPanel.add(binaryPanel);
 
         centerPanel.add(memoryPanel, BorderLayout.CENTER);
 
-        // Buttons with specific action listeners
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 5, 10, 10));
+        // Buttons
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 4, 10, 10));
 
         JButton loadBtn = new JButton("Load");
         loadBtn.addActionListener(e -> onLoadClick());
@@ -101,7 +121,6 @@ public class AssemblerSimulatorGUI {
         JButton iplBtn = new JButton("IPL");
         iplBtn.addActionListener(e -> onIPLClick());
 
-        // Add buttons to panel
         buttonPanel.add(loadBtn);
         buttonPanel.add(loadPlusBtn);
         buttonPanel.add(storeBtn);
@@ -111,7 +130,8 @@ public class AssemblerSimulatorGUI {
         buttonPanel.add(haltBtn);
         buttonPanel.add(iplBtn);
 
-        JTextField programFile = new JTextField();
+        // Program file input
+        programFile = new JTextField();
         programFile.setBorder(BorderFactory.createTitledBorder("Program File"));
 
         JPanel controlPanel = new JPanel(new BorderLayout());
@@ -121,11 +141,11 @@ public class AssemblerSimulatorGUI {
         centerPanel.add(controlPanel, BorderLayout.SOUTH);
         frame.add(centerPanel, BorderLayout.CENTER);
 
-        // Bottom Panel: Printer + Console Input
+        // === Bottom: Printer and Console Input ===
         JPanel outputPanel = new JPanel(new GridLayout(1, 2));
-        JTextArea printer = new JTextArea(5, 20);
+        printer = new JTextArea(5, 20);
         printer.setBorder(BorderFactory.createTitledBorder("Printer"));
-        JTextField consoleInput = new JTextField();
+        consoleInput = new JTextField();
         consoleInput.setBorder(BorderFactory.createTitledBorder("Console Input"));
         outputPanel.add(new JScrollPane(printer));
         outputPanel.add(consoleInput);
@@ -135,9 +155,10 @@ public class AssemblerSimulatorGUI {
         frame.setVisible(true);
     }
 
-    // === INDIVIDUAL BUTTON METHODS ===
+    // === BUTTON ACTIONS ===
     private void onLoadClick() {
-        System.out.println("Load button clicked");
+        cacheContent.setText("0");  // Example: set cache content to 0
+        System.out.println("Load button clicked - Cache reset to 0");
     }
 
     private void onLoadPlusClick() {
@@ -168,14 +189,14 @@ public class AssemblerSimulatorGUI {
         System.out.println("IPL button clicked");
     }
 
-    // === Helper class for labeled input ===
+    // === LabeledTextField Inner Class ===
     class LabeledTextField extends JPanel {
-        JTextField textField;
+        private final JTextField textField;
 
         LabeledTextField(String label) {
             setLayout(new BorderLayout());
             JLabel jLabel = new JLabel(label + ": ");
-            textField = new JTextField(5);
+            textField = new JTextField(6);
             add(jLabel, BorderLayout.WEST);
             add(textField, BorderLayout.CENTER);
         }
