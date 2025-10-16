@@ -20,26 +20,35 @@ public class InstructionExecutor {
 
     // Load Register from Memory
     private static void executeLDR(Cpu cpu, Instruction instruction) {
-
+        int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
+        int value = cpu.readUnsignedMemory(EA);
+        cpu.GPR[instruction.getR()].setValue(value);
     }
 
     // Store Register to Memory
     private static void executeSTR(Cpu cpu, Instruction instruction) {
-
+        int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
+        int value = cpu.GPR[instruction.getR()].getValue();
+        cpu.writeMemory(EA, (short) value);
     }
 
     // Load Register with Address
     private static void executeLDA(Cpu cpu, Instruction instruction) {
-
+        int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
+        cpu.GPR[instruction.getR()].setValue(EA);
     }
 
     // Load Index Register from Memory
     private static void executeLDX(Cpu cpu, Instruction instruction) {
-
+        int EA = cpu.computeEffectiveAddress(instruction.getAddress(), 0, instruction.isIndirect());
+        int value = cpu.readUnsignedMemory(EA);
+        cpu.IXR[instruction.getIx() - 1].setValue(value);
     }
 
     // Store Index Register to Memory
     private static void executeSTX(Cpu cpu, Instruction instruction) {
-
+        int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
+        int value = cpu.IXR[instruction.getIx() - 1].getValue();
+        cpu.writeMemory(EA, (short) value);
     }
 }

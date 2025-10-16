@@ -32,6 +32,7 @@ public class Cpu {
         this.mem = mem;
     }
 
+    // Memory helpers that treat exceptions
     private short readMemory(int addr) {
         try {
             return mem.read(addr);
@@ -41,12 +42,21 @@ public class Cpu {
         return -1;
     }
 
-    private void writeMemory(int addr, short value) {
+    public void writeMemory(int addr, short value) {
         try {
             mem.write(addr, value);
         } catch (MemoryAccessException e) {
             this.handleMemoryError();
         }
+    }
+
+    public int readUnsignedMemory(int addr) {
+        try {
+            return mem.readUnsigned(addr);
+        } catch (MemoryAccessException e) {
+            this.handleMemoryError();
+        }
+        return -1;
     }
 
     // reads the instruction from memory
@@ -92,5 +102,12 @@ public class Cpu {
 
         System.out.println("MEMORY ERROR!");
         System.out.println("CPU Execution has been halted.");
+    }
+
+    public int computeEffectiveAddress(int address, int ix, boolean indirect) {
+        int EA = address;
+        if (ix > 0) EA += IXR[ix - 1].getValue(); // IXR array is 0-based
+        if (indirect) EA = readUnsignedMemory(EA);
+        return EA & 0xFFF; // 12-bit address mask
     }
 }

@@ -35,7 +35,7 @@ public class Memory {
 
     // reads the value inside
     // an address as an unsigned integer
-//    public int readUnsigned(int addr) {
-//        return read(addr) & 0xFFFF;
-//    }
+    public int readUnsigned(int addr) throws MemoryAccessException {
+        return read(addr) & 0xFFFF;
+    }
 }
