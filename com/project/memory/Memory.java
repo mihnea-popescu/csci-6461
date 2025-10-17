@@ -7,7 +7,7 @@ import com.project.util.Constants;
 public class Memory {
     // we know from documentation that
     // words are 16bit so we use the short primitive data type
-    private short[] memoryCells = new short[Constants.MEMORY_SIZE];
+    public short[] memoryCells = new short[Constants.MEMORY_SIZE];
 
     // read a word
     public short read(int addr) throws MemoryAccessException{

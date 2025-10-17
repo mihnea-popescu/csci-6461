@@ -1,6 +1,13 @@
 package com.project.util;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 public class InputParser {
+    public static String outputFileName = "output.txt";
 
     public static int parseLine(String line) {
         int commentIndex = line.indexOf(";");
@@ -396,5 +403,54 @@ public class InputParser {
                 break;
         }
         return instruction;
+    }
+
+    public static List<String> readAllLines(String filePath) throws IOException {
+        return Files.readAllLines(Paths.get(filePath));
+    }
+
+    public static List<Integer> getBinaryCodes(String inputFileName) {
+        List<Integer> binaryCodes = new ArrayList<>();
+        try {
+            List<String> lines = readAllLines(inputFileName);
+
+            List<String> outputLines = new ArrayList<>();
+
+            for (String line : lines) {
+                try {
+                    int binaryCode = InputParser.parseLine(line);
+
+                    if(binaryCode != -1) {
+                        String binaryString = String.format("%16s", Integer.toBinaryString(binaryCode)).replace(' ', '0');
+                        System.out.println(binaryString);
+                        outputLines.add(
+                                String.format("INPUT: %-70s OUTPUT: %s", line, binaryString)
+                        );
+                        binaryCodes.add(binaryCode);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error parsing line: " + line);
+                    System.err.println("  " + e.getMessage());
+                }
+            }
+
+            Files.write(Paths.get(outputFileName), outputLines);
+        } catch (IOException e) {
+            System.err.println("Error reading/writing file: " + e.getMessage());
+        }
+        return binaryCodes;
+    }
+
+    public static String MemToString(short[] data){
+        StringBuilder sb = new StringBuilder();
+
+        for (short s : data) {
+            String binary = String.format("%16s", Integer.toBinaryString(s & 0xFFFF))
+                               .replace(' ', '0');
+            sb.append(binary).append("\n");
+        }
+
+        String result = sb.toString();
+        return result;
     }
 }
