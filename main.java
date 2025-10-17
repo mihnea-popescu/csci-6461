@@ -1,3 +1,9 @@
+package com.project;
+import com.project.cpu.Cpu;
+import com.project.loader.RomLoader;
+import com.project.memory.Memory;
+import com.project.util.InputParser;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,7 +19,8 @@ public class main {
         return Files.readAllLines(Paths.get(filePath));
     }
 
-    public static void main(String[] args) {
+    public static List<Integer> getBinaryCodes() {
+        List<Integer> binaryCodes = new ArrayList<>();
         try {
             List<String> lines = readAllLines(inputFileName);
 
@@ -24,22 +31,34 @@ public class main {
                     int binaryCode = InputParser.parseLine(line);
 
                     if(binaryCode != -1) {
-                        // Make sure it is 16-bit
                         String binaryString = String.format("%16s", Integer.toBinaryString(binaryCode)).replace(' ', '0');
                         System.out.println(binaryString);
-                        outputLines.add(binaryString);
+                        outputLines.add(
+                                String.format("INPUT: %-70s OUTPUT: %s", line, binaryString)
+                        );
+                        binaryCodes.add(binaryCode);
                     }
-                    // something
                 } catch (Exception e) {
                     System.err.println("Error parsing line: " + line);
                     System.err.println("  " + e.getMessage());
                 }
             }
 
-            // Write all processed lines to output.txt, overwriting the file
             Files.write(Paths.get(outputFileName), outputLines);
         } catch (IOException e) {
             System.err.println("Error reading/writing file: " + e.getMessage());
         }
+        return binaryCodes;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> binaryCodes = main.getBinaryCodes();
+
+        Memory memory = new Memory();
+
+        RomLoader.loadInstructionsInMemory(memory,binaryCodes);
+
+        Cpu cpu = new Cpu(memory);
+        cpu.run();
     }
 }

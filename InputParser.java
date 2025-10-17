@@ -1,40 +1,34 @@
+package com.project.util;
 
 public class InputParser {
 
     public static int parseLine(String line) {
-        // Remove comments
         int commentIndex = line.indexOf(";");
         if (commentIndex != -1) {
             line = line.substring(0, commentIndex);
         }
         line = line.trim();
         if (line.isEmpty()) {
-            return -1; // there's nothing on this line
+            return -1;
         }
 
-        // Split line by spaces
         String[] parts = line.split("\\s+", 2);
         String mnemonic = parts[0].toUpperCase();
 
         int opcode;
 
         String[] operands = parts[1].split(",");
-        //remove anything after space or colon
-        /*for (int i = 0; i < operands.length; i++) {
-            operands[i] = operands[i].trim().split("\\s|:")[0];
-        }
-        */
 
-        int instruction = 0;
+        int instruction = -1;
 
         switch (mnemonic){
             case "HLT":
                 opcode = 0b000000;
-                return opcode << 10; // opcode in top 6 bits
+                return opcode << 10;
             // mihnea
             case "TRAP":
                 opcode = 0b11110;
-                return opcode << 10; // same 6 bits
+                return opcode << 10;
             case "LDR":
                 opcode = 0b000001;
 
@@ -401,11 +395,6 @@ public class InputParser {
             default:
                 break;
         }
-
-
-        // Parse all the operands
-
-
         return instruction;
     }
 }
