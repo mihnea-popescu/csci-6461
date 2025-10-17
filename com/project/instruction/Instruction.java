@@ -27,9 +27,9 @@ public class Instruction {
         return ix;
     }
 
-//    public int getI() {
-//        return i;
-//    }
+   public int getI() {
+       return i;
+   }
 
     public int getAddress() {
         return address;

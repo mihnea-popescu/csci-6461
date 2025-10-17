@@ -1,6 +1,7 @@
 package com.project.cpu;
 
 import com.project.instruction.Instruction;
+import com.project.memory.exceptions.MemoryAccessException;
 
 public class InstructionExecutor {
     public static void execute(Cpu cpu, Instruction instruction) {
@@ -15,11 +16,22 @@ public class InstructionExecutor {
             case 3 -> executeLDA(cpu, instruction);
             case 41 -> executeLDX(cpu, instruction);
             case 42 -> executeSTX(cpu, instruction);
+            case 254 -> executeData(cpu,instruction);
             default -> cpu.triggerFault(1); // opcode is illegal
         }
     }
 
     // INSTRUCTIONS IMPLEMENTATIONS
+    // data
+    private static void executeData(Cpu cpu, Instruction instruction){
+        try{
+            cpu.mem.write(cpu.PC.getValue(),(short)((instruction.getIx() << 6) + (instruction.getI() << 5)+ (instruction.getAddress())));
+        }
+        catch (MemoryAccessException e){
+            System.out.println("mem access error");
+        }
+        
+    }
 
     // Load Register from Memory
     private static void executeLDR(Cpu cpu, Instruction instruction) {
