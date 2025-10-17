@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import com.project.cpu.Cpu;
 import com.project.loader.RomLoader;
 import com.project.memory.Memory;
+import com.project.util.Constants;
 import com.project.util.InputParser;;
 
 public class AssemblerSimulatorGUI {
@@ -28,8 +29,8 @@ public class AssemblerSimulatorGUI {
     public JTextField octalInput;
     public JTextField programFile;
 
-    public LabeledTextField[] gprFields = new LabeledTextField[4];
-    public LabeledTextField[] ixrFields = new LabeledTextField[3];
+    public LabeledTextField[] gprFields = new LabeledTextField[Constants.NUM_GPRS];
+    public LabeledTextField[] ixrFields = new LabeledTextField[Constants.NUM_IXRS];
     public LabeledTextField pcField, marField, mbrField, irField;
     public LabeledTextField ccField, mfrField;
 
@@ -53,7 +54,7 @@ public class AssemblerSimulatorGUI {
         // GPRs
         JPanel gprPanel = new JPanel(new GridLayout(1, 4));
         gprPanel.setBorder(BorderFactory.createTitledBorder("GPR"));
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < Constants.NUM_GPRS; i++) {
             gprFields[i] = new LabeledTextField("GPR " + i);
             gprPanel.add(gprFields[i]);
         }
@@ -61,7 +62,7 @@ public class AssemblerSimulatorGUI {
         // IXRs
         JPanel ixrPanel = new JPanel(new GridLayout(1, 3));
         ixrPanel.setBorder(BorderFactory.createTitledBorder("IXR"));
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < Constants.NUM_IXRS; i++) {
             ixrFields[i] = new LabeledTextField("IXR " + (i + 1));
             ixrPanel.add(ixrFields[i]);
         }
@@ -169,49 +170,124 @@ public class AssemblerSimulatorGUI {
         consoleInput.setBorder(BorderFactory.createTitledBorder("Console Input"));
         outputPanel.add(new JScrollPane(printer));
         outputPanel.add(consoleInput);
+        
+        // initial value for display
+        update_display();
 
         frame.add(outputPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
     }
 
+    private String toBinaryString(int value, int bits) {
+        int mask = (1 << bits) - 1;  // creates a bitmask of N bits
+        return String.format("%" + bits + "s", Integer.toBinaryString(value & mask))
+                    .replace(' ', '0');
+    }
+
+    // display util
+    public void update_display(){
+        // update memory
+        cacheContent.setText(InputParser.MemToString(mem.memoryCells));
+        // Update GPR
+        for (int i = 0; i < Constants.NUM_GPRS; i++) {
+            gprFields[i].setText(toBinaryString(cpu.GPR[i].getValue(), 16));
+        }
+
+        // Update IXR
+        for (int i = 0; i < Constants.NUM_IXRS; i++) {
+            ixrFields[i].setText(toBinaryString(cpu.IXR[i].getValue(), 16));
+        }
+
+        // Update PC
+        pcField.setText(toBinaryString(cpu.PC.getValue(), 12));
+
+        // Update CC
+        ccField.setText(toBinaryString(cpu.CC.getValue(), 4));
+
+        // Update IR
+        irField.setText(toBinaryString(cpu.IR.getValue(), 16));
+
+        // Update MAR
+        marField.setText(toBinaryString(cpu.MAR.getValue(), 12));
+
+        // Update MFR
+        mfrField.setText(toBinaryString(cpu.MFR.getValue(), 4));
+
+        
+
+    }
+
+    public void clear(){
+        printer.setText("");
+        octalInput.setText("");
+        binaryOutput.setText("");
+        consoleInput.setText("");
+    }
     // === BUTTON ACTIONS ===
     public void onLoadClick() {
+        clear();
         cacheContent.setText("0");  // Example: set cache content to 0
         System.out.println("Load button clicked - Cache reset to 0");
     }
 
     public void onLoadPlusClick() {
+        clear();
         System.out.println("Load+ button clicked");
     }
 
     public void onStoreClick() {
+        clear();
         System.out.println("Store button clicked");
     }
 
     public void onStorePlusClick() {
+        clear();
         System.out.println("Store+ button clicked");
     }
 
     public void onRunClick() {
+        clear();
         System.out.println("Run button clicked");
+        cpu.run();
+        update_display();
     }
 
     public void onStepClick() {
+        clear();
         System.out.println("Step button clicked");
+        if (!cpu.halted) {
+            cpu.step();
+        }
+        else{
+            printer.setText("execution finished");
+        }
+        update_display();
     }
 
     public void onHaltClick() {
+        clear();
         System.out.println("Halt button clicked");
     }
 
+    public void hardware_clear(){
+        mem = new Memory();
+        cpu = new Cpu(mem);
+        update_display();
+    }
     public void onIPLClick() {
+        clear();
+        hardware_clear();
         System.out.println("IPL button clicked");
         String input_file_name = programFile.getText();
         List<Integer> binaryCodes = InputParser.getBinaryCodes(input_file_name);
+        if (binaryCodes == null){
+            printer.setText("file not found");
+            return;
+        }
         RomLoader.loadInstructionsInMemory(mem,binaryCodes);
-        cacheContent.setText(InputParser.MemToString(mem.memoryCells));
-        cpu.run();
+        update_display();
+        
 
     }
 

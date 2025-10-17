@@ -4,3 +4,4 @@
 output.txt
 .DS_STORE
 *.jar
+.vscode

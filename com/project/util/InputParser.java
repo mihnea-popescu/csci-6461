@@ -437,6 +437,7 @@ public class InputParser {
             Files.write(Paths.get(outputFileName), outputLines);
         } catch (IOException e) {
             System.err.println("Error reading/writing file: " + e.getMessage());
+            return null;
         }
         return binaryCodes;
     }
@@ -444,11 +445,19 @@ public class InputParser {
     public static String MemToString(short[] data){
         StringBuilder sb = new StringBuilder();
 
+        int index = 0;
         for (short s : data) {
-            String binary = String.format("%16s", Integer.toBinaryString(s & 0xFFFF))
-                               .replace(' ', '0');
-            sb.append(binary).append("\n");
+            if (s != 0) {
+                String binary = String.format("%16s", Integer.toBinaryString(s & 0xFFFF))
+                                    .replace(' ', '0');
+                String indexBinary = String.format("%11s", Integer.toBinaryString(index & 0x7FF))
+                                        .replace(' ', '0');
+                sb.append(String.format("Index %s: %s\n", indexBinary, binary));
+            }
+            index++;
         }
+
+
 
         String result = sb.toString();
         return result;
