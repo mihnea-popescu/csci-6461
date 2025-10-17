@@ -285,7 +285,7 @@ public class AssemblerSimulatorGUI {
             printer.setText("file not found");
             return;
         }
-        RomLoader.loadInstructionsInMemory(mem,binaryCodes);
+        RomLoader.loadInstructionsInMemory(cpu,binaryCodes);
         update_display();
         
 
