@@ -29,6 +29,24 @@ public class InputParser {
         int instruction = -1;
 
         switch (mnemonic){
+            case "LOC":
+                opcode = 0b11111111; // fake opcode (255)
+                if (operands.length < 1) {
+                    System.out.println("LOC input error");
+                    return -1;
+                }
+                int address_loc = Integer.parseInt(operands[0].trim());
+                instruction = (opcode << 8) | (address_loc & 0xFF);
+                break;
+            case "DATA":
+                opcode = 0b11111110; // fake opcode (254)
+                if (operands.length < 1) {
+                    System.out.println("DATA input error");
+                    return -1;
+                }
+                int value_data = Integer.parseInt(operands[0].trim());
+                instruction = (opcode << 8) | (value_data & Constants.MAX_WORD_SIZE);
+                break;
             case "HLT":
                 opcode = 0b000000;
                 return opcode << 10;
