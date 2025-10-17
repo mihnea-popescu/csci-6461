@@ -3,7 +3,6 @@ package com.project.memory;
 import com.project.memory.exceptions.MemoryAccessException;
 import com.project.util.Constants;
 
-import java.security.InvalidParameterException;
 
 public class Memory {
     // we know from documentation that
@@ -23,9 +22,9 @@ public class Memory {
     }
 
     // reset everything in the memmory
-//    public void reset() {
-//        for (int i = 0; i < Constants.MEMORY_SIZE; i++) memoryCells[i] = 0;
-//    }
+    public void reset() {
+        for (int i = 0; i < Constants.MEMORY_SIZE; i++) memoryCells[i] = 0;
+    }
 
     // validates an address inside the memory
     private void checkAddress(int addr) throws  MemoryAccessException {

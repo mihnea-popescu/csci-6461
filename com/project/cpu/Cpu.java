@@ -106,8 +106,34 @@ public class Cpu {
 
     public int computeEffectiveAddress(int address, int ix, boolean indirect) {
         int EA = address;
-        if (ix > 0) EA += IXR[ix - 1].getValue(); // IXR array is 0-based
+        if (ix > 0) EA += IXR[ix - 1].getValue();
         if (indirect) EA = readUnsignedMemory(EA);
-        return EA & 0xFFF; // 12-bit address mask
+        // use a 12bit mask
+        return EA & 0xFFF;
+    }
+
+    // process one step of instructions
+    public void step() {
+        fetch();
+        Instruction instr = decode();
+        execute(instr);
+    }
+
+    // Runs all instructions automatically
+    public void run() {
+        System.out.println("CPU Execution: START");
+        while (!halted) {
+            step();
+        }
+        System.out.println("CPU Execution: END");
+    }
+
+    // reset all registers & the memory
+    public void reset() {
+        PC.clear(); IR.clear(); MAR.clear(); MFR.clear(); CC.clear();
+        for (Register r : GPR) r.clear();
+        for (Register x : IXR) x.clear();
+        // reset memory as well
+        mem.reset();
     }
 }

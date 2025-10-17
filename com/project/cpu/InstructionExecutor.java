@@ -6,7 +6,10 @@ public class InstructionExecutor {
     public static void execute(Cpu cpu, Instruction instruction) {
         int opcode = instruction.getOpcode();
 
+        System.out.println("INSTRUCTION OPCODE: " + instruction.getOpcode());
+
         switch(opcode) {
+            case 0 -> cpu.halted = true;
             case 1 -> executeLDR(cpu, instruction);
             case 2 -> executeSTR(cpu, instruction);
             case 3 -> executeLDA(cpu, instruction);
@@ -22,6 +25,7 @@ public class InstructionExecutor {
     private static void executeLDR(Cpu cpu, Instruction instruction) {
         int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
         int value = cpu.readUnsignedMemory(EA);
+        System.out.println("Executing LDR: setting value " + value + " to R" + instruction.getR() + " from memory[" + EA + "]");
         cpu.GPR[instruction.getR()].setValue(value);
     }
 
@@ -29,12 +33,14 @@ public class InstructionExecutor {
     private static void executeSTR(Cpu cpu, Instruction instruction) {
         int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
         int value = cpu.GPR[instruction.getR()].getValue();
+        System.out.println("Executing STR: storing value " + value + " from R" + instruction.getR() + " to memory[" + EA + "]");
         cpu.writeMemory(EA, (short) value);
     }
 
     // Load Register with Address
     private static void executeLDA(Cpu cpu, Instruction instruction) {
         int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
+        System.out.println("Executing LDA: loading effective address " + EA + " into R" + instruction.getR());
         cpu.GPR[instruction.getR()].setValue(EA);
     }
 
@@ -42,6 +48,7 @@ public class InstructionExecutor {
     private static void executeLDX(Cpu cpu, Instruction instruction) {
         int EA = cpu.computeEffectiveAddress(instruction.getAddress(), 0, instruction.isIndirect());
         int value = cpu.readUnsignedMemory(EA);
+        System.out.println("Executing LDX: loading value " + value + " into IX" + instruction.getIx() + " from memory[" + EA + "]");
         cpu.IXR[instruction.getIx() - 1].setValue(value);
     }
 
@@ -49,6 +56,7 @@ public class InstructionExecutor {
     private static void executeSTX(Cpu cpu, Instruction instruction) {
         int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
         int value = cpu.IXR[instruction.getIx() - 1].getValue();
+        System.out.println("Executing STX: storing IX" + instruction.getIx() + " value " + value + " to memory[" + EA + "]");
         cpu.writeMemory(EA, (short) value);
     }
 }

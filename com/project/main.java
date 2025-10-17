@@ -1,4 +1,7 @@
 package com.project;
+import com.project.cpu.Cpu;
+import com.project.loader.RomLoader;
+import com.project.memory.Memory;
 import com.project.util.InputParser;
 
 import java.io.IOException;
@@ -16,7 +19,8 @@ public class main {
         return Files.readAllLines(Paths.get(filePath));
     }
 
-    public static void main(String[] args) {
+    public static List<Integer> getBinaryCodes() {
+        List<Integer> binaryCodes = new ArrayList<>();
         try {
             List<String> lines = readAllLines(inputFileName);
 
@@ -32,6 +36,7 @@ public class main {
                         outputLines.add(
                                 String.format("INPUT: %-70s OUTPUT: %s", line, binaryString)
                         );
+                        binaryCodes.add(binaryCode);
                     }
                 } catch (Exception e) {
                     System.err.println("Error parsing line: " + line);
@@ -43,5 +48,17 @@ public class main {
         } catch (IOException e) {
             System.err.println("Error reading/writing file: " + e.getMessage());
         }
+        return binaryCodes;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> binaryCodes = main.getBinaryCodes();
+
+        Memory memory = new Memory();
+
+        RomLoader.loadInstructionsInMemory(memory,binaryCodes);
+
+        Cpu cpu = new Cpu(memory);
+        cpu.run();
     }
 }
