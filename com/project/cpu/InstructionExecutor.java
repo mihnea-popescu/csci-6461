@@ -16,16 +16,21 @@ public class InstructionExecutor {
             case 3 -> executeLDA(cpu, instruction);
             case 41 -> executeLDX(cpu, instruction);
             case 42 -> executeSTX(cpu, instruction);
-            case 254 -> executeData(cpu,instruction);
+            case 62 -> executeData(cpu,instruction);
+            case 63 -> executeLoc(cpu, instruction);
             default -> cpu.triggerFault(1); // opcode is illegal
         }
     }
 
     // INSTRUCTIONS IMPLEMENTATIONS
+    // loc
+    private static void executeLoc(Cpu cpu, Instruction instruction){
+        cpu.PC.setValue((short)((instruction.getR()<<8)+(instruction.getIx() << 6) + (instruction.getI() << 5)+ (instruction.getAddress())));
+    }
     // data
     private static void executeData(Cpu cpu, Instruction instruction){
         try{
-            cpu.mem.write(cpu.PC.getValue(),(short)((instruction.getIx() << 6) + (instruction.getI() << 5)+ (instruction.getAddress())));
+            cpu.mem.write(cpu.PC.getValue()-1,(short)((instruction.getR()<<8)+(instruction.getIx() << 6) + (instruction.getI() << 5)+ (instruction.getAddress())));
         }
         catch (MemoryAccessException e){
             System.out.println("mem access error");

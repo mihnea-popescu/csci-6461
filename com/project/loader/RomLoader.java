@@ -11,9 +11,9 @@ public class RomLoader {
         int ins1 = binaryCodes.get(0);
         int a = 0;
         int address = 0;
-        if (ins1 >> 8 == 255){
+        if (ins1 >> 10 == 63){
             a = 1;
-            address = ins1 & 0b11111111;
+            address = ins1 & 0b1111111111;
             cpu.PC.setValue(address);
         }
         for( int i = a; i < binaryCodes.size();i++) {
