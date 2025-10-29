@@ -1,6 +1,7 @@
 package com.project.cpu;
 
 import com.project.instruction.Instruction;
+import com.project.memory.Cache;
 import com.project.memory.Memory;
 import com.project.memory.exceptions.MemoryAccessException;
 import com.project.util.Constants;
@@ -21,6 +22,9 @@ public class Cpu {
     // Init memory
     public Memory mem;
 
+    // Init cache
+    private final Cache cache;
+
     // indicates whether the cpu execution has been halted
     public boolean halted = false;
 
@@ -30,12 +34,13 @@ public class Cpu {
         Arrays.setAll(IXR, i -> new Register(16));
 
         this.mem = mem;
+        this.cache = new Cache(mem);
     }
 
     // Memory helpers that treat exceptions
     private short readMemory(int addr) {
         try {
-            return mem.read(addr);
+            return cache.read(addr);
         } catch (MemoryAccessException e) {
             this.handleMemoryError();
         }
@@ -44,7 +49,7 @@ public class Cpu {
 
     public void writeMemory(int addr, short value) {
         try {
-            mem.write(addr, value);
+            cache.write(addr, value);
         } catch (MemoryAccessException e) {
             this.handleMemoryError();
         }
@@ -52,7 +57,7 @@ public class Cpu {
 
     public int readUnsignedMemory(int addr) {
         try {
-            return mem.readUnsigned(addr);
+            return cache.readUnsigned(addr);
         } catch (MemoryAccessException e) {
             this.handleMemoryError();
         }
@@ -135,5 +140,10 @@ public class Cpu {
         for (Register x : IXR) x.clear();
         // reset memory as well
         mem.reset();
+    }
+
+    // for debugging & gui
+    public Cache getCache() {
+        return this.cache;
     }
 }
