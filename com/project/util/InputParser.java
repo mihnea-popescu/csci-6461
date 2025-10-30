@@ -30,7 +30,7 @@ public class InputParser {
 
         switch (mnemonic){
             case "LOC":
-                opcode = 0b111111; // fake opcode (63) octal 77
+                opcode = 0b001001; // fake opcode (63) octal 77
                 if (operands.length < 1) {
                     System.out.println("LOC input error");
                     return -1;
@@ -39,7 +39,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (address_loc & 0xFF);
                 break;
             case "DATA":
-                opcode = 0b111110; // fake opcode (62) octal 76
+                opcode = 0b001000; // fake opcode (62) octal 76
                 if (operands.length < 1) {
                     System.out.println("DATA input error");
                     return -1;
@@ -239,7 +239,7 @@ public class InputParser {
                 break;
                 // apurva
             case "MLT":
-                opcode = 0b111000;  
+                opcode = 0b010100;  
                 if (operands.length < 2) {
                     System.out.println("MLT input error");
                     return -1;
@@ -250,7 +250,7 @@ public class InputParser {
                 break;
 
             case "DVD":
-                opcode = 0b111001;  
+                opcode = 0b010101;  
                 if (operands.length < 2) {
                     System.out.println("DVD input error");
                     return -1;
@@ -261,7 +261,7 @@ public class InputParser {
                 break;
 
             case "TRR":
-                opcode = 0b111010;  
+                opcode = 0b010110;  
                 if (operands.length < 2) {
                     System.out.println("TRR input error");
                     return -1;
@@ -272,7 +272,7 @@ public class InputParser {
                 break;
 
             case "AND":
-                opcode = 0b111011;  
+                opcode = 0b010111;  
                 if (operands.length < 2) {
                     System.out.println("AND input error");
                     return -1;
@@ -283,7 +283,7 @@ public class InputParser {
                 break;
 
             case "ORR":
-                opcode = 0b111100;  
+                opcode = 0b011000;  
                 if (operands.length < 2) {
                     System.out.println("ORR input error");
                     return -1;
@@ -294,7 +294,7 @@ public class InputParser {
                 break;
 
             case "NOT":
-                opcode = 0b111101;  
+                opcode = 0b011001;  
                 if (operands.length < 1) {
                     System.out.println("NOT input error");
                     return -1;
