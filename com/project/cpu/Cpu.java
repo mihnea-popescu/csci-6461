@@ -23,7 +23,7 @@ public class Cpu {
     public Memory mem;
 
     // Init cache
-    private final Cache cache;
+    public final Cache cache;
 
     // indicates whether the cpu execution has been halted
     public boolean halted = false;

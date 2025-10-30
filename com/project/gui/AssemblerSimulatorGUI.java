@@ -9,6 +9,7 @@ import com.project.cpu.Cpu;
 import com.project.cpu.InstructionDecoder;
 import com.project.loader.RomLoader;
 import com.project.memory.Memory;
+import com.project.util.CacheToString;
 import com.project.util.Constants;
 import com.project.util.InputParser;
 
@@ -16,6 +17,7 @@ public class AssemblerSimulatorGUI {
 
     // === Class-level components ===
     public JTextArea memoryContent;
+    public JTextArea cacheContent;
     public JTextArea printer;
     public JTextField consoleInput;
     public JTextField binaryOutput;
@@ -36,7 +38,7 @@ public class AssemblerSimulatorGUI {
         cpu = new Cpu(mem);
         JFrame frame = new JFrame("Assembler Simulator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 700);
+        frame.setSize(1000, 750);
         frame.setLayout(new BorderLayout());
 
         // === Top panel for Registers ===
@@ -85,15 +87,18 @@ public class AssemblerSimulatorGUI {
 
         frame.add(registerPanel, BorderLayout.NORTH);
 
-        // === Center panel for memory, input/output, and buttons ===
+        // === Center panel for memory, cache, input/output, and buttons ===
         JPanel centerPanel = new JPanel(new BorderLayout());
 
-        // Memory & Binary Panel
-        JPanel memoryPanel = new JPanel(new GridLayout(1, 2));
+        // === Memory & Cache Panel ===
+        JPanel memoryPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+
+        // Memory Content
         memoryContent = new JTextArea(10, 20);
         memoryContent.setBorder(BorderFactory.createTitledBorder("Memory Content"));
         memoryPanel.add(new JScrollPane(memoryContent));
 
+        // Binary/Octal Panel
         JPanel binaryPanel = new JPanel(new GridLayout(2, 1));
         octalInput = new JTextField();
         binaryOutput = new JTextField();
@@ -103,9 +108,18 @@ public class AssemblerSimulatorGUI {
         binaryPanel.add(binaryOutput);
         memoryPanel.add(binaryPanel);
 
+        // Cache Content
+        cacheContent = new JTextArea(10, 20);
+        cacheContent.setBorder(BorderFactory.createTitledBorder("Cache Content"));
+        cacheContent.setEditable(false);
+        memoryPanel.add(new JScrollPane(cacheContent));
+
+        // filler for grid balance
+        memoryPanel.add(new JPanel());
+
         centerPanel.add(memoryPanel, BorderLayout.CENTER);
 
-        // Buttons
+        // === Buttons ===
         JPanel buttonPanel = new JPanel(new GridLayout(2, 4, 10, 10));
 
         JButton loadBtn = new JButton("Load");
@@ -162,10 +176,10 @@ public class AssemblerSimulatorGUI {
         outputPanel.add(new JScrollPane(printer));
         outputPanel.add(consoleInput);
 
-        // Initial value for display
-        update_display();
-
         frame.add(outputPanel, BorderLayout.SOUTH);
+
+        // Initialize display
+        update_display();
 
         frame.setVisible(true);
     }
@@ -176,9 +190,11 @@ public class AssemblerSimulatorGUI {
                      .replace(' ', '0');
     }
 
-    // display util
+    // === Display utility ===
     public void update_display() {
         memoryContent.setText(InputParser.MemToString(mem.memoryCells));
+        // cache display
+        cacheContent.setText(CacheToString.cacheToString(cpu.cache));
 
         for (int i = 0; i < Constants.NUM_GPRS; i++) {
             gprFields[i].setText(toBinaryString(cpu.GPR[i].getValue(), 16));
@@ -210,16 +226,15 @@ public class AssemblerSimulatorGUI {
         binaryOutput.setText(Integer.toBinaryString(bin_input));
         octalInput.setText(Integer.toOctalString(bin_input));
         cpu.execute(InstructionDecoder.decode(bin_input));
-        printer.append("Load button clicked, load intruction in the console to CPU\n");
+        printer.append("Load button clicked, load instruction into the CPU\n");
     }
 
     public void onLoadPlusClick() {
         clear();
-        for (int i = 0; i < Constants.NUM_GPRS; i++){
+        for (int i = 0; i < Constants.NUM_GPRS; i++) {
             cpu.GPR[i].setValue(Integer.parseInt(gprFields[i].getText(), 2));
             gprFields[i].setText(toBinaryString(cpu.GPR[i].getValue(), 16));
         }
-
         printer.append("Load+ button clicked\n");
     }
 
