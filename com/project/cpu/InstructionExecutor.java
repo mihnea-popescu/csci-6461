@@ -14,10 +14,12 @@ public class InstructionExecutor {
             case 1 -> executeLDR(cpu, instruction);
             case 2 -> executeSTR(cpu, instruction);
             case 3 -> executeLDA(cpu, instruction);
+            case 8 -> executeData(cpu, instruction);
+            case 9 -> executeLoc(cpu, instruction);
             case 41 -> executeLDX(cpu, instruction);
             case 42 -> executeSTX(cpu, instruction);
-            case 62 -> executeData(cpu,instruction);
-            case 63 -> executeLoc(cpu, instruction);
+            case 62 -> executeOUT(cpu, instruction);
+            case 63 -> executeCHK(cpu, instruction);
             default -> cpu.triggerFault(1); // opcode is illegal
         }
     }
