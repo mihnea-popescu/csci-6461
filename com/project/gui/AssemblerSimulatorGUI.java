@@ -2,27 +2,20 @@ package com.project.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import java.util.List;
-import java.util.ArrayList;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 
 // import hardware components
 import com.project.cpu.Cpu;
+import com.project.cpu.InstructionDecoder;
 import com.project.loader.RomLoader;
 import com.project.memory.Memory;
 import com.project.util.Constants;
-import com.project.util.InputParser;;
+import com.project.util.InputParser;
 
 public class AssemblerSimulatorGUI {
 
     // === Class-level components ===
-    public JTextArea cacheContent;
+    public JTextArea memoryContent;
     public JTextArea printer;
     public JTextField consoleInput;
     public JTextField binaryOutput;
@@ -37,7 +30,6 @@ public class AssemblerSimulatorGUI {
     // === Hardware Components ===
     public Memory mem;
     public Cpu cpu;
-
 
     public AssemblerSimulatorGUI() {
         mem = new Memory();
@@ -98,9 +90,9 @@ public class AssemblerSimulatorGUI {
 
         // Memory & Binary Panel
         JPanel memoryPanel = new JPanel(new GridLayout(1, 2));
-        cacheContent = new JTextArea(10, 20);
-        cacheContent.setBorder(BorderFactory.createTitledBorder("Cache Content"));
-        memoryPanel.add(new JScrollPane(cacheContent));
+        memoryContent = new JTextArea(10, 20);
+        memoryContent.setBorder(BorderFactory.createTitledBorder("Memory Content"));
+        memoryPanel.add(new JScrollPane(memoryContent));
 
         JPanel binaryPanel = new JPanel(new GridLayout(2, 1));
         octalInput = new JTextField();
@@ -139,8 +131,6 @@ public class AssemblerSimulatorGUI {
 
         JButton iplBtn = new JButton("IPL");
         iplBtn.addActionListener(e -> onIPLClick());
-        // Inside the constructor (already present, just showing for clarity)
-
 
         buttonPanel.add(loadBtn);
         buttonPanel.add(loadPlusBtn);
@@ -166,12 +156,13 @@ public class AssemblerSimulatorGUI {
         JPanel outputPanel = new JPanel(new GridLayout(1, 2));
         printer = new JTextArea(5, 20);
         printer.setBorder(BorderFactory.createTitledBorder("Printer"));
+        printer.setEditable(false);
         consoleInput = new JTextField();
         consoleInput.setBorder(BorderFactory.createTitledBorder("Console Input"));
         outputPanel.add(new JScrollPane(printer));
         outputPanel.add(consoleInput);
-        
-        // initial value for display
+
+        // Initial value for display
         update_display();
 
         frame.add(outputPanel, BorderLayout.SOUTH);
@@ -180,115 +171,113 @@ public class AssemblerSimulatorGUI {
     }
 
     private String toBinaryString(int value, int bits) {
-        int mask = (1 << bits) - 1;  // creates a bitmask of N bits
+        int mask = (1 << bits) - 1;
         return String.format("%" + bits + "s", Integer.toBinaryString(value & mask))
-                    .replace(' ', '0');
+                     .replace(' ', '0');
     }
 
     // display util
-    public void update_display(){
-        // update memory
-        cacheContent.setText(InputParser.MemToString(mem.memoryCells));
-        // Update GPR
+    public void update_display() {
+        memoryContent.setText(InputParser.MemToString(mem.memoryCells));
+
         for (int i = 0; i < Constants.NUM_GPRS; i++) {
             gprFields[i].setText(toBinaryString(cpu.GPR[i].getValue(), 16));
         }
 
-        // Update IXR
         for (int i = 0; i < Constants.NUM_IXRS; i++) {
             ixrFields[i].setText(toBinaryString(cpu.IXR[i].getValue(), 16));
         }
 
-        // Update PC
         pcField.setText(toBinaryString(cpu.PC.getValue(), 12));
-
-        // Update CC
         ccField.setText(toBinaryString(cpu.CC.getValue(), 4));
-
-        // Update IR
         irField.setText(toBinaryString(cpu.IR.getValue(), 16));
-
-        // Update MAR
         marField.setText(toBinaryString(cpu.MAR.getValue(), 12));
-
-        // Update MFR
         mfrField.setText(toBinaryString(cpu.MFR.getValue(), 4));
-
-        
-
     }
 
-    public void clear(){
-        printer.setText("");
+    // Only clear user input fields, not printer log
+    public void clear() {
         octalInput.setText("");
         binaryOutput.setText("");
         consoleInput.setText("");
     }
+
     // === BUTTON ACTIONS ===
     public void onLoadClick() {
         clear();
-        cacheContent.setText("0");  // Example: set cache content to 0
-        System.out.println("Load button clicked - Cache reset to 0");
+        String instruction = consoleInput.getText();
+        int bin_input = InputParser.parseLine(instruction);
+        binaryOutput.setText(Integer.toBinaryString(bin_input));
+        octalInput.setText(Integer.toOctalString(bin_input));
+        cpu.execute(InstructionDecoder.decode(bin_input));
+        printer.append("Load button clicked, load intruction in the console to CPU\n");
     }
 
     public void onLoadPlusClick() {
         clear();
-        System.out.println("Load+ button clicked");
+        for (int i = 0; i < Constants.NUM_GPRS; i++){
+            cpu.GPR[i].setValue(Integer.parseInt(gprFields[i].getText(), 2));
+            gprFields[i].setText(toBinaryString(cpu.GPR[i].getValue(), 16));
+        }
+
+        printer.append("Load+ button clicked\n");
     }
 
     public void onStoreClick() {
         clear();
-        System.out.println("Store button clicked");
+        printer.append("Store button clicked\n");
     }
 
     public void onStorePlusClick() {
         clear();
-        System.out.println("Store+ button clicked");
+        printer.append("Store+ button clicked\n");
     }
 
     public void onRunClick() {
         clear();
-        System.out.println("Run button clicked");
+        printer.append("Run button clicked\n");
         cpu.run();
         update_display();
     }
 
     public void onStepClick() {
         clear();
-        System.out.println("Step button clicked");
+        printer.append("Step button clicked\n");
+        cpu.PC.setValue(Integer.parseInt(pcField.getText(), 2));
         if (!cpu.halted) {
             cpu.step();
-        }
-        else{
-            printer.setText("execution finished");
+            printer.append("Step executed.\n");
+        } else {
+            printer.append("Execution finished.\n");
         }
         update_display();
     }
 
     public void onHaltClick() {
         clear();
-        System.out.println("Halt button clicked");
+        cpu.halted = true;
+        printer.append("Halt button clicked\n");
     }
 
-    public void hardware_clear(){
+    public void hardware_clear() {
         mem = new Memory();
         cpu = new Cpu(mem);
         update_display();
     }
+
     public void onIPLClick() {
         clear();
         hardware_clear();
-        System.out.println("IPL button clicked");
+        printer.append("IPL button clicked\n");
         String input_file_name = programFile.getText();
         List<Integer> binaryCodes = InputParser.getBinaryCodes(input_file_name);
-        if (binaryCodes == null){
-            printer.setText("file not found");
+        if (binaryCodes == null) {
+            printer.append("File not found.\n");
             return;
         }
-        RomLoader.loadInstructionsInMemory(cpu,binaryCodes);
+        RomLoader.loadInstructionsInMemory(cpu, binaryCodes);
+        printer.append("Program loaded successfully.\n");
         update_display();
-        
-
     }
 
     // === LabeledTextField Inner Class ===
