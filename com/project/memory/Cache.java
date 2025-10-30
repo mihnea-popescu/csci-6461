@@ -9,7 +9,7 @@ import java.util.*;
 public class Cache {
 
     // each cache entry
-    private static class CacheLine {
+    public static class CacheLine {
         boolean valid;
         int tag;       // memory address
         short data;      // 16bit word
@@ -23,14 +23,14 @@ public class Cache {
         }
     }
 
-    private static final int CACHE_SIZE = 16;
-    private final List<CacheLine> lines = new ArrayList<>();
-    private final Memory memory;               // reference to main memory
-    private long clock = 0;                    // for FIFO ordering
+    public static final int CACHE_SIZE = 16;
+    public final List<CacheLine> lines = new ArrayList<>();
+    public final Memory memory;               // reference to main memory
+    public long clock = 0;                    // for FIFO ordering
 
     // stats
-    private int hits = 0;
-    private int misses = 0;
+    public int hits = 0;
+    public int misses = 0;
 
     public Cache(Memory memory) {
         this.memory = memory;
@@ -91,7 +91,7 @@ public class Cache {
         memory.write(address, (short) value);
     }
 
-    private void insertLine(int address, short value) {
+    public void insertLine(int address, short value) {
         if (lines.size() < CACHE_SIZE) {
             lines.add(new CacheLine(address, value, clock));
         } else {
