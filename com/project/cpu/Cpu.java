@@ -140,6 +140,8 @@ public class Cpu {
         for (Register x : IXR) x.clear();
         // reset memory as well
         mem.reset();
+        // reset cache
+        cache.clear();
     }
 
     // for debugging & gui
