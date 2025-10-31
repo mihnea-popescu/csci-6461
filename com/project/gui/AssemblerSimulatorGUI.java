@@ -173,6 +173,12 @@ public class AssemblerSimulatorGUI {
         printer.setEditable(false);
         consoleInput = new JTextField();
         consoleInput.setBorder(BorderFactory.createTitledBorder("Console Input"));
+        consoleInput.addActionListener(e -> {
+            String text = consoleInput.getText();
+            consoleInput.setText("");
+            printer.append("User input: " + text + "\n");
+            cpu.provideInput(text); // send to CPU
+        });
         outputPanel.add(new JScrollPane(printer));
         outputPanel.add(consoleInput);
 
@@ -223,9 +229,15 @@ public class AssemblerSimulatorGUI {
         clear();
         String instruction = consoleInput.getText();
         int bin_input = InputParser.parseLine(instruction);
-        binaryOutput.setText(Integer.toBinaryString(bin_input));
-        octalInput.setText(Integer.toOctalString(bin_input));
-        cpu.execute(InstructionDecoder.decode(bin_input));
+        if (bin_input == -1) {
+            return;
+        }
+        else{
+            binaryOutput.setText(Integer.toBinaryString(bin_input));
+            octalInput.setText(Integer.toOctalString(bin_input));
+            cpu.execute(InstructionDecoder.decode(bin_input));
+        }
+        
         printer.append("Load button clicked, load instruction into the CPU\n");
     }
 
@@ -251,22 +263,45 @@ public class AssemblerSimulatorGUI {
     public void onRunClick() {
         clear();
         printer.append("Run button clicked\n");
-        cpu.run();
-        update_display();
+
+        Thread cpuThread = new Thread(() -> {
+            cpu.run();
+            SwingUtilities.invokeLater(() -> {
+                update_display();
+                printer.append("Program execution finished.\n");
+            });
+        });
+        cpuThread.start();
     }
+
 
     public void onStepClick() {
         clear();
         printer.append("Step button clicked\n");
+
+        // Set PC from GUI before running
         cpu.PC.setValue(Integer.parseInt(pcField.getText(), 2));
-        if (!cpu.halted) {
-            cpu.step();
-            printer.append("Step executed.\n");
-        } else {
-            printer.append("Execution finished.\n");
-        }
-        update_display();
+        pcField.setText(toBinaryString(cpu.PC.getValue(), 12));
+
+        // Run CPU step in a separate thread
+        new Thread(() -> {
+            if (!cpu.halted) {
+                cpu.step();
+
+                // Update GUI safely on EDT
+                SwingUtilities.invokeLater(() -> {
+                    printer.append("Step executed.\n");
+                    update_display();
+                });
+            } else {
+                SwingUtilities.invokeLater(() -> {
+                    printer.append("Execution finished.\n");
+                    update_display();
+                });
+            }
+        }).start();
     }
+
 
     public void onHaltClick() {
         clear();
