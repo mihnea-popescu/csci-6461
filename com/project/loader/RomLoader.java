@@ -20,7 +20,7 @@ public class RomLoader {
             try {
                 cpu.mem.write(address++, (short) (int)binaryCodes.get(i));
             } catch (MemoryAccessException e) {
-                System.out.println("MEMORY ACCESS EXCEPTION!");
+                System.out.println("MEMORY ACCESS EXCEPTION!"); //Exception
             }
         }
     }
