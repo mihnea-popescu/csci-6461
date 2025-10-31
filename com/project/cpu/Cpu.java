@@ -28,6 +28,14 @@ public class Cpu {
     // indicates whether the cpu execution has been halted
     public boolean halted = false;
 
+    // provide buffer and Lock to wait for GUI input
+    private String inputBuffer = null;
+    private final Object inputLock = new Object();
+
+
+
+   
+
     public Cpu(Memory mem){
         // Set up GPR and IXR registers
         Arrays.setAll(GPR, i -> new Register(16));
@@ -35,6 +43,29 @@ public class Cpu {
 
         this.mem = mem;
         this.cache = new Cache(mem);
+    }
+
+    public void provideInput(String input) {
+        synchronized (inputLock) {
+            inputBuffer = input;
+            inputLock.notifyAll(); // wake up CPU if waiting
+        }
+    }
+
+    public String waitForInput() {
+        synchronized (inputLock) {
+            while (inputBuffer == null) {
+                try {
+                    inputLock.wait(); // wait for GUI to provide input
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
+            }
+            String result = inputBuffer;
+            inputBuffer = null; // clear for next time
+            return result;
+        }
     }
 
     // Memory helpers that treat exceptions
