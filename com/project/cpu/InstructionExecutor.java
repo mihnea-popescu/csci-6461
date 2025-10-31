@@ -2,6 +2,7 @@ package com.project.cpu;
 
 import com.project.instruction.Instruction;
 import com.project.memory.exceptions.MemoryAccessException;
+import com.project.util.CacheToString;
 
 public class InstructionExecutor {
     public static void execute(Cpu cpu, Instruction instruction) {
@@ -355,9 +356,12 @@ public class InstructionExecutor {
     // Output to device
     private static void executeOUT(Cpu cpu, Instruction instruction) {
         int r = instruction.getR();
-        char out = (char) (cpu.GPR[r].getValue() & 0xFF);
+        int o = (cpu.GPR[r].getValue() & 0xFF);
+        String out = Integer.toString(o);
+
+        cpu.printToGUI("Executing OUT: outputting '" + out + "' from R" + r);
         System.out.println("Executing OUT: outputting '" + out + "' from R" + r);
-        System.out.print(out);
+        System.out.println(cpu.GPR[r].getValue());
     }
 
     // Check device status (stub)

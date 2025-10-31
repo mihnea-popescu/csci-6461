@@ -1,0 +1,80 @@
+LOC 30;
+; ===== Input 20 numbers =====
+IN 3,0;
+STR 3,0,7;
+IN 3,0;
+STR 3,0,8;
+IN 3,0;
+STR 3,0,9;
+IN 3,0;
+STR 3,0,10;
+IN 3,0;
+STR 3,0,11;
+IN 3,0;
+STR 3,0,12;
+IN 3,0;
+STR 3,0,13;
+IN 3,0;
+STR 3,0,14;
+IN 3,0;
+STR 3,0,15;
+IN 3,0;
+STR 3,0,16;
+IN 3,0;
+STR 3,0,17;
+IN 3,0;
+STR 3,0,18;
+IN 3,0;
+STR 3,0,19;
+IN 3,0;
+STR 3,0,20;
+IN 3,0;
+STR 3,0,21;
+IN 3,0;
+STR 3,0,22;
+IN 3,0;
+STR 3,0,23;
+IN 3,0;
+STR 3,0,24;
+IN 3,0;
+STR 3,0,25;
+IN 3,0;
+STR 3,0,26;
+
+; ===== Input target number =====
+IN 3,0;
+STR 3,0,27;         ; target = R3
+
+; ===== Initialize =====
+LDR 1,0,7;          ; R1 = first number
+LDR 2,0,27;         ; R2 = target
+SUB 3,2,1;          ; R3 = target - current
+JGE 3,0,68;         ; if R3 >= 0, skip neg
+SIR 3,0;            ; R3 = -R3
+STR 3,0,28;         ; min_diff = abs(target - first)
+STR 1,0,29;         ; closest = first number
+
+; ===== Loop setup =====
+LDA 4,8;            ; R4 = current address = 8
+
+; ===== Compare next numbers =====
+; Loop start (address ~75)
+LDR 1,4,0;          ; R1 = number at address R4
+SUB 3,2,1;          ; R3 = target - current
+JGE 3,0,82;         ; if >=0 skip neg
+SIR 3,0;            ; R3 = -R3
+; check if R3 < min_diff
+LDR 5,0,28;         ; R5 = min_diff
+SUB 6,3,5;          ; R6 = diff - min_diff
+JGE 6,0,90;         ; if diff >= min_diff skip update
+STR 3,0,28;         ; min_diff = diff
+STR 1,0,29;         ; closest = current
+; skip update target (90)
+AIR 4,1;             ; move to next memory location
+SUB 7,4,27;          ; R7 = current_addr - 27 (stop when 27)
+JNE 7,0,75;          ; if not equal, loop again
+
+; ===== Output closest =====
+LDR 1,0,29;          ; load closest number
+OUT 1,0;             ; output it
+HLT;                 ; halt
