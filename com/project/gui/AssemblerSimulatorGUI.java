@@ -36,6 +36,7 @@ public class AssemblerSimulatorGUI {
     public AssemblerSimulatorGUI() {
         mem = new Memory();
         cpu = new Cpu(mem);
+        cpu.setPrinterCallback(msg -> SwingUtilities.invokeLater(() -> printer.append(msg + "\n")));
         JFrame frame = new JFrame("Assembler Simulator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 750);
@@ -312,6 +313,8 @@ public class AssemblerSimulatorGUI {
     public void hardware_clear() {
         mem = new Memory();
         cpu = new Cpu(mem);
+        cpu.setPrinterCallback(msg -> SwingUtilities.invokeLater(() -> printer.append(msg + "\n")));
+
         update_display();
     }
 

@@ -329,16 +329,28 @@ public class InstructionExecutor {
     // Input from device
     private static void executeIN(Cpu cpu, Instruction instruction) {
         int r = instruction.getR();
+        cpu.printToGUI("CPU waiting for input...");
         System.out.println("Executing IN: waiting for input from GUI...");
+
         String input = cpu.waitForInput();
+
         if (input != null && !input.isEmpty()) {
-            int value = input.charAt(0); // take first character, or parseInt() if numeric
+            int value;
+            try {
+                value = Integer.parseInt(input); // try numeric
+            } catch (NumberFormatException e) {
+                value = input.charAt(0); // fallback to first char
+            }
             cpu.GPR[r].setValue(value);
+
+            cpu.printToGUI("Received: " + input);
             System.out.println("GUI input -> R" + r + " = " + value);
         } else {
+            cpu.printToGUI("No input received.");
             System.out.println("No input received.");
         }
     }
+
 
     // Output to device
     private static void executeOUT(Cpu cpu, Instruction instruction) {

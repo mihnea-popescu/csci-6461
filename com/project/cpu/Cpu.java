@@ -31,6 +31,11 @@ public class Cpu {
     // provide buffer and Lock to wait for GUI input
     private String inputBuffer = null;
     private final Object inputLock = new Object();
+    // printer call back
+    // Add at the top of the Cpu class
+    private java.util.function.Consumer<String> printerCallback;
+
+    
 
 
 
@@ -44,6 +49,20 @@ public class Cpu {
         this.mem = mem;
         this.cache = new Cache(mem);
     }
+
+    // GUI Utilities
+    // Allow GUI to register a callback
+    public void setPrinterCallback(java.util.function.Consumer<String> callback) {
+        this.printerCallback = callback;
+    }
+
+    // Utility method to print to GUI
+    public void printToGUI(String message) {
+        if (printerCallback != null) {
+            printerCallback.accept(message);
+        }
+    }
+
 
     public void provideInput(String input) {
         synchronized (inputLock) {
@@ -68,6 +87,11 @@ public class Cpu {
         }
     }
 
+
+
+
+
+    
     // Memory helpers that treat exceptions
     private short readMemory(int addr) {
         try {
