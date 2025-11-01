@@ -2,6 +2,7 @@ package com.project.cpu;
 
 import com.project.instruction.Instruction;
 import com.project.memory.exceptions.MemoryAccessException;
+import com.project.util.CacheToString;
 
 public class InstructionExecutor {
     public static void execute(Cpu cpu, Instruction instruction) {
@@ -18,30 +19,30 @@ public class InstructionExecutor {
             case 5 -> executeSMR(cpu, instruction);
             case 6 -> executeAIR(cpu, instruction);
             case 7 -> executeSIR(cpu, instruction);
-            case 10 -> executeJZ(cpu, instruction);
-            case 11 -> executeJNE(cpu, instruction);
-            case 12 -> executeJCC(cpu, instruction);
-            case 13 -> executeJMA(cpu, instruction);
-            case 14 -> executeJSR(cpu, instruction);
-            case 15 -> executeRFS(cpu, instruction);
-            case 16 -> executeSOB(cpu, instruction);
-            case 17 -> executeJGE(cpu, instruction);
-            case 20 -> executeMLT(cpu, instruction);
-            case 21 -> executeDVD(cpu, instruction);
-            case 22 -> executeTRR(cpu, instruction);
-            case 23 -> executeAND(cpu, instruction);
-            case 24 -> executeORR(cpu, instruction);
-            case 25 -> executeNOT(cpu, instruction);
-            case 31 -> executeSRC(cpu, instruction);
-            case 32 -> executeRRC(cpu, instruction);
-            case 41 -> executeLDX(cpu, instruction);
-            case 42 -> executeSTX(cpu, instruction);
-            case 61 -> executeIN(cpu, instruction);
-            case 62 -> executeOUT(cpu, instruction);
-            case 63 -> executeCHK(cpu, instruction);
+            case 8 -> executeJZ(cpu, instruction);
+            case 9 -> executeJNE(cpu, instruction);
+            case 10 -> executeJCC(cpu, instruction);
+            case 11 -> executeJMA(cpu, instruction);
+            case 12 -> executeJSR(cpu, instruction);
+            case 13 -> executeRFS(cpu, instruction);
+            case 14 -> executeSOB(cpu, instruction);
+            case 15 -> executeJGE(cpu, instruction);
+            case 25 -> executeSRC(cpu, instruction);
+            case 26 -> executeRRC(cpu, instruction);
+            case 33 -> executeLDX(cpu, instruction);
+            case 34 -> executeSTX(cpu, instruction);
+            case 49 -> executeIN(cpu, instruction);
+            case 50 -> executeOUT(cpu, instruction);
+            case 51 -> executeCHK(cpu, instruction);
+            case 56 -> executeMLT(cpu, instruction);
+            case 57 -> executeDVD(cpu, instruction);
+            case 58 -> executeTRR(cpu, instruction);
+            case 59 -> executeAND(cpu, instruction);
+            case 60 -> executeORR(cpu, instruction);
+            case 61 -> executeNOT(cpu, instruction);
             // fake opcodes
-            case 8 -> executeData(cpu, instruction); // fake opcode
-            case 9 -> executeLoc(cpu, instruction); // fake opcode
+            case 62 -> executeData(cpu, instruction); // fake opcode
+            case 63 -> executeLoc(cpu, instruction); // fake opcode
             // opcode not found
             default -> cpu.triggerFault(1);
         }
@@ -318,7 +319,7 @@ public class InstructionExecutor {
 
     // Jump if Greater or Equal
     private static void executeJGE(Cpu cpu, Instruction instruction) {
-        int rVal = cpu.GPR[instruction.getR()].getValue();
+        int rVal = cpu.GPR[instruction.getR()].getSignedValue();
         int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
         if (rVal >= 0) {
             System.out.println("Executing JGE: R" + instruction.getR() + " >= 0, jumping to " + EA);
@@ -355,9 +356,12 @@ public class InstructionExecutor {
     // Output to device
     private static void executeOUT(Cpu cpu, Instruction instruction) {
         int r = instruction.getR();
-        char out = (char) (cpu.GPR[r].getValue() & 0xFF);
+        int o = (cpu.GPR[r].getValue() & 0xFF);
+        String out = Integer.toString(o);
+
+        cpu.printToGUI("Executing OUT: outputting '" + out + "' from R" + r);
         System.out.println("Executing OUT: outputting '" + out + "' from R" + r);
-        System.out.print(out);
+        System.out.println(cpu.GPR[r].getValue());
     }
 
     // Check device status (stub)

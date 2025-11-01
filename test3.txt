@@ -1,0 +1,48 @@
+LOC 6;
+AIR 0,31;
+STR 0,0,0;
+LDX 1,0;    IXR 1 = 31
+AIR 0,31;
+STR 0,0,0;
+LDX 2,0;    IXR 2 = 62
+AIR 0,31;
+STR 0,0,0;
+LDX 3,0;    IXR 3 = 93
+IN 0,0;     start of  5 input
+STR 0,0,1;
+IN 0,0;
+STR 0,0,2;
+IN 0,0;
+STR 0,0,3;
+IN 0,0;
+STR 0,0,4;
+IN 0,0;
+STR 0,0,5;
+IN 0,0;     target input
+STR 0,0,6;
+LDR 0,0,1;  start compare 1st input
+SMR 0,0,6;
+JGE 0,1,2;
+NOT 0;
+SIR 0,1;
+STR 0,0,0;
+LDR 0,0,1;
+STR 0,0,7;
+LDR 0,0,2;  start compare 2nd input
+SMR 0,0,6;
+JGE 0,1,10;
+NOT 0;
+SIR 0,1;
+STR 0,0,8;
+SMR 0,0,0;
+JGE 0,1,15;
+LDR 0,0,8;
+STR 0,0,0;
+LDR 0,0,2;
+STR 0,0,7;
+LDR 0,0,7; output
+OUT 0,0;
+
+
+
+

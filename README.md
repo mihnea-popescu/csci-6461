@@ -1,5 +1,9 @@
 # User Guide
 ## GUI
+### console
+- if you type assmbly in console and click "Load" button, the instruction will be load into cpu and execute
+- if cpu is waiting for input, please type in input and press "enter" on the keyboard
+
 ### Load
 - load the instruction type in the console field to CPU and execute it
 

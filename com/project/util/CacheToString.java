@@ -3,6 +3,11 @@ package com.project.util;
 import com.project.memory.Cache;
 
 public class CacheToString {
+    public static String toBinaryString(int value, int bits) {
+        int mask = (1 << bits) - 1;
+        return String.format("%" + bits + "s", Integer.toBinaryString(value & mask))
+                     .replace(' ', '0');
+    }
     public static String cacheToString(Cache cache) {
         StringBuilder sb = new StringBuilder();
 
