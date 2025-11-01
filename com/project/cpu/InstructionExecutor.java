@@ -319,7 +319,7 @@ public class InstructionExecutor {
 
     // Jump if Greater or Equal
     private static void executeJGE(Cpu cpu, Instruction instruction) {
-        int rVal = cpu.GPR[instruction.getR()].getValue();
+        int rVal = cpu.GPR[instruction.getR()].getSignedValue();
         int EA = cpu.computeEffectiveAddress(instruction.getAddress(), instruction.getIx(), instruction.isIndirect());
         if (rVal >= 0) {
             System.out.println("Executing JGE: R" + instruction.getR() + " >= 0, jumping to " + EA);
