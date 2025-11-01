@@ -11,7 +11,7 @@ public class RomLoader {
         int ins1 = binaryCodes.get(0);
         int a = 0;
         int address = 0;
-        if (ins1 >> 10 == 9){
+        if (ins1 >> 10 == 63) { // LOC instruction
             a = 1;
             address = ins1 & 0b1111111111;
             cpu.PC.setValue(address);

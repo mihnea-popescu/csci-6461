@@ -1,3 +1,38 @@
-LOC 6;
-IN 3,0;
-OUT 3,0;
+AIR 1,0          ; R1 = 0 (loop index)
+IN 0,0           ; read integer
+STR 0,0,40+0     ; store at DATA[0]
+OUT 0,1          ; print integer
+AIR 1,1          ; R1 = R1 + 1
+SIR 1,20         ; R1 - 20
+JGE 1,1           ; if R1 < 20 jump back to IN (address 1)
+IN 0,0           ; read target number
+STR 0,0,60       ; store target
+
+;initialize closest = DATA[0]
+LDR 2,0,40       ; load DATA[0] into 2
+STR 2,0,61       ; store as closest
+AIR 1,0          ; R1 = 0 (loop index for search)
+
+; SEARCH_LOOP start
+LDR 0,0,60       ; load target into 0
+LDR 2,0,40+0     ; load DATA[R1] (simplified, see note)
+SMR 0,0,40+0     ; R0 = target - DATA[R1]
+JGE 0,0          ; if >=0 skip
+SIR 0,0          ; else R0 = -R0
+LDR 3,0,61       ; load current closest
+SMR 3,0,60       ; closest - target
+JGE 3,0          ; if >=0 skip
+SIR 3,0          ; else R3 = -R3
+SMR 3,0          ; compare closest diff - current diff
+JGE 3,24         ; if closest diff <= current, skip update
+LDR 2,0,40+0     ; update closest = DATA[R1]
+STR 2,0,61
+AIR 1,1          ; R1 = R1 + 1
+SIR 1,20         ; R1 - 20
+JGE 1,12         ; if R1 < 20, continue loop
+
+LDR 0,0,60       ; print target
+OUT 0,1
+LDR 0,0,61       ; print closest
+OUT 0,1
+JMA 0            ; halt

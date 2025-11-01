@@ -30,7 +30,7 @@ public class InputParser {
 
         switch (mnemonic){
             case "LOC":
-                opcode = 0b001001; // fake opcode (63) octal 77
+                opcode = 0b111111; // fake opcode (63) octal 77
                 if (operands.length < 1) {
                     System.out.println("LOC input error");
                     return -1;
@@ -39,7 +39,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (address_loc & 0xFF);
                 break;
             case "DATA":
-                opcode = 0b001000; // fake opcode (62) octal 76
+                opcode = 0b111110; // fake opcode (62) octal 76
                 if (operands.length < 1) {
                     System.out.println("DATA input error");
                     return -1;
@@ -48,14 +48,14 @@ public class InputParser {
                 instruction = (opcode << 10) | (value_data & Constants.MAX_WORD_SIZE);
                 break;
             case "HLT":
-                opcode = 0b000000;
+                opcode = 0b000000; // octal 00 decimal 0
                 return opcode << 10;
             // mihnea
             case "TRAP":
-                opcode = 0b11110;
+                opcode = 0b011000; // octal 30 decimal 24
                 return opcode << 10;
             case "LDR":
-                opcode = 0b000001;
+                opcode = 0b000001; // octal 01 decimal 1
 
                 int r = Integer.parseInt(operands[0].trim());
                 int ix = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -65,7 +65,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "STR":
-                opcode = 0b00010;
+                opcode = 0b00010; // octal 02 decimal 2
 
                 int r_str = Integer.parseInt(operands[0].trim());
                 int ix_str = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -75,7 +75,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r_str << 8) | (ix_str << 6) | (i_str << 5) | (address_str & 0x1F);
                 break;
             case "LDA":
-                opcode = 0b00011;
+                opcode = 0b00011; // octal 03 decimal 3
 
                 int r_lda = Integer.parseInt(operands[0].trim());
                 int ix_lda = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -85,7 +85,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r_lda << 8) | (ix_lda << 6) | (i_lda << 5) | (address_lda & 0x1F);
                 break;
             case "LDX":
-                opcode = 0b100001;
+                opcode = 0b100001; // octal 41 decimal 33
 
                 int ix_ldx = (operands.length > 1) ? Integer.parseInt(operands[0].trim()) : 0;
                 int address_ldx = (operands.length > 2) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -94,7 +94,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (ix_ldx << 6) | (i_ldx << 5) | (address_ldx & 0x1F);
                 break;
             case "STX":
-                opcode = 0b100010;
+                opcode = 0b100010; // octal 42 decimal 34
 
                 int ix_stx = (operands.length > 1) ? Integer.parseInt(operands[0].trim()) : 0;
                 int address_stx = (operands.length > 2) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -103,7 +103,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (ix_stx << 6) | (i_stx << 5) | (address_stx & 0x1F);
                 break;
             case "JZ":
-                opcode = 0b01010;
+                opcode = 0b001000; // octal 10 decimal 8
 
                 int r_jz = Integer.parseInt(operands[0].trim());
                 int ix_jz = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -113,7 +113,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r_jz << 8) | (ix_jz << 6) | (i_jz << 5) | (address_jz & 0x1F);
                 break;
             case "JNE":
-                opcode = 0b01011;
+                opcode = 0b001001; // octal 11 decimal 9
 
                 int r_jne = Integer.parseInt(operands[0].trim());
                 int ix_jne = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -123,7 +123,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r_jne << 8) | (ix_jne << 6) | (i_jne << 5) | (address_jne & 0x1F);
                 break;
             case "JCC":
-                opcode = 0b01100;
+                opcode = 0b001010; // octal 12 decimal 10
 
                 int cc_jcc = Integer.parseInt(operands[0].trim());
                 int ix_jcc = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
@@ -134,7 +134,7 @@ public class InputParser {
                 break;
                 // james
             case "JMA":
-                opcode = 0b001011;
+                opcode = 0b001011; // octal 13 decimal 11
                 r = 0;
                 if (operands.length < 2){
                     System.out.println("JMA input error");
@@ -147,7 +147,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "JSR":
-                opcode = 0b001100;
+                opcode = 0b001100; // octal 14 decimal 12
                 if (operands.length < 2){
                     System.out.println("JSR input error");
                     return -1;
@@ -159,7 +159,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "RFS":
-                opcode = 0b001101;
+                opcode = 0b001101; // octal 15 decimal 13
                 if (operands.length < 1){
                     System.out.println("RFS input error");
                     return -1;
@@ -168,7 +168,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (address & 0x1F);
                 break;
             case "SOB":
-                opcode = 0b001110;
+                opcode = 0b001110; // octal 16 decimal 14
                 if (operands.length<3){
                     System.out.println("SOB input error");
                     return -1;
@@ -180,7 +180,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "JGE":
-                opcode = 0b001111;
+                opcode = 0b001111; // octal 17 decimal 15
                 if (operands.length < 3){
                     System.out.println("JGE input error");
                     return -1;
@@ -192,7 +192,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "AMR":
-                opcode = 0b100;
+                opcode = 0b100; // octal 04 decimal 4
                 if (operands.length < 3){
                     System.out.println("AMR input error");
                     return -1;
@@ -204,7 +204,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "SMR":
-                opcode = 0b101;
+                opcode = 0b101; // octal 05 decimal 5
                 if (operands.length < 3){
                     System.out.println("SMR input error");
                     return -1;
@@ -216,7 +216,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "AIR":
-                opcode = 0b110;
+                opcode = 0b110; // octal 06 decimal 6
                 if (operands.length < 2){
                     System.out.println("AIR input error");
                     return -1;
@@ -228,7 +228,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r << 8) | (ix << 6) | (i << 5) | (address & 0x1F);
                 break;
             case "SIR":
-                opcode = 0b111;
+                opcode = 0b111; // octal 07 decimal 7
                 if (operands.length < 2){
                     System.out.println("SIR input error");
                     return -1;
@@ -239,7 +239,7 @@ public class InputParser {
                 break;
                 // apurva
             case "MLT":
-                opcode = 0b010100;  
+                opcode = 0b111000;  // octal 70 decimal 56
                 if (operands.length < 2) {
                     System.out.println("MLT input error");
                     return -1;
@@ -250,7 +250,7 @@ public class InputParser {
                 break;
 
             case "DVD":
-                opcode = 0b010101;  
+                opcode = 0b111001;  // octal 71 decimal 57
                 if (operands.length < 2) {
                     System.out.println("DVD input error");
                     return -1;
@@ -261,7 +261,7 @@ public class InputParser {
                 break;
 
             case "TRR":
-                opcode = 0b010110;  
+                opcode = 0b111010;  // octal 72 decimal 58
                 if (operands.length < 2) {
                     System.out.println("TRR input error");
                     return -1;
@@ -272,7 +272,7 @@ public class InputParser {
                 break;
 
             case "AND":
-                opcode = 0b010111;  
+                opcode = 0b111011;  // octal 73 decimal 59
                 if (operands.length < 2) {
                     System.out.println("AND input error");
                     return -1;
@@ -283,7 +283,7 @@ public class InputParser {
                 break;
 
             case "ORR":
-                opcode = 0b011000;  
+                opcode = 0b111100;  // octal 74 decimal 60
                 if (operands.length < 2) {
                     System.out.println("ORR input error");
                     return -1;
@@ -294,7 +294,7 @@ public class InputParser {
                 break;
 
             case "NOT":
-                opcode = 0b011001;  
+                opcode = 0b111101;  // octal 75 decimal 61
                 if (operands.length < 1) {
                     System.out.println("NOT input error");
                     return -1;
@@ -304,7 +304,7 @@ public class InputParser {
                 break;
 
             case "SRC":
-                opcode = 0b011111;  
+                opcode = 0b011001;  // octal 31 decimal 25
                 if (operands.length < 4) {
                     System.out.println("SRC input error");
                     return -1;
@@ -317,7 +317,7 @@ public class InputParser {
                 break;
 
             case "RRC":
-                opcode = 0b100000;  
+                opcode = 0b011010;  // octal 32 decimal 26
                 if (operands.length < 4) {
                     System.out.println("RRC input error");
                     return -1;
@@ -330,7 +330,7 @@ public class InputParser {
                 break;
 
             case "IN":
-                opcode = 0b111101;  
+                opcode = 0b110001;  // octal 61 decimal 49
                 if (operands.length < 2) {
                     System.out.println("IN input error");
                     return -1;
@@ -341,21 +341,21 @@ public class InputParser {
                 break;
                 // sinchana
             case "OUT":
-                opcode = 0b111110;  // 62
+                opcode = 0b110010;  // octal 62 decimal 50
                 int r_out = Integer.parseInt(operands[0].trim());      // register r
                 int devid_out = Integer.parseInt(operands[1].trim());  // device id
 
                 instruction = (opcode << 10) | (r_out << 8) | (devid_out & 0x1F);
                 break;
             case "CHK":
-                opcode = 0b111111;  // 63
+                opcode = 0b110011;  // octal 63 decimal 51
                 int r_chk = Integer.parseInt(operands[0].trim());      // register r
                 int devid_chk = Integer.parseInt(operands[1].trim());  // device id
 
                 instruction = (opcode << 10) | (r_chk << 8) | (devid_chk & 0x1F);
                 break;
             case "FADD":
-                opcode = 0b100001;  // 33
+                opcode = 0b011011;  // octal 33 decimal 27
                 int fr_fadd = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
                 int ix_fadd = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
                 int addr_fadd = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
@@ -364,7 +364,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (fr_fadd << 8) | (ix_fadd << 6) | (i_fadd << 5) | (addr_fadd & 0x1F);
                 break;
             case "FSUB":
-                opcode = 0b100010;  // 34
+                opcode = 0b011100;  // octal 34 decimal 28
                 int fr_fsub = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
                 int ix_fsub = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
                 int addr_fsub = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
@@ -373,7 +373,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (fr_fsub << 8) | (ix_fsub << 6) | (i_fsub << 5) | (addr_fsub & 0x1F);              
                 break;
             case "VADD":
-                opcode = 0b100011;  // 35
+                opcode = 0b011101;  // octal 35 decimal 29
                 int fr_vadd = Integer.parseInt(operands[0].trim());   // vector length register (0 or 1)
                 int ix_vadd = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
                 int addr_vadd = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
@@ -382,7 +382,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (fr_vadd << 8) | (ix_vadd << 6) | (i_vadd << 5) | (addr_vadd & 0x1F);
                 break;
             case "VSUB":
-                opcode = 0b100100;  // 36
+                opcode = 0b011110;  // octal 36 decimal 30
                 int fr_vsub = Integer.parseInt(operands[0].trim());   // vector length register (0 or 1)
                 int ix_vsub = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
                 int addr_vsub = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
@@ -391,7 +391,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (fr_vsub << 8) | (ix_vsub << 6) | (i_vsub << 5) | (addr_vsub & 0x1F);
                 break;
             case "CNVRT":
-                opcode = 0b100101;  // 37
+                opcode = 0b011111;  // octal 37 decimal 31
                 int r_cnvrt = Integer.parseInt(operands[0].trim());
                 int ix_cnvrt = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
                 int addr_cnvrt = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
@@ -400,7 +400,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (r_cnvrt << 8) | (ix_cnvrt << 6) | (i_cnvrt << 5) | (addr_cnvrt & 0x1F);
                 break;
             case "LDFR":
-                opcode = 0b110010;  // 50
+                opcode = 0b101000;  // octal 50 decimal 40
                 int fr_ldfr = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
                 int ix_ldfr = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
                 int addr_ldfr = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
@@ -409,7 +409,7 @@ public class InputParser {
                 instruction = (opcode << 10) | (fr_ldfr << 8) | (ix_ldfr << 6) | (i_ldfr << 5) | (addr_ldfr & 0x1F);
                 break;
             case "STFR":
-                opcode = 0b110011;  // 51
+                opcode = 0b101001;  // octal 51 decimal 41
                 int fr_stfr = Integer.parseInt(operands[0].trim());   // floating register (0 or 1)
                 int ix_stfr = (operands.length > 1) ? Integer.parseInt(operands[1].trim()) : 0;
                 int addr_stfr = (operands.length > 2) ? Integer.parseInt(operands[2].trim()) : 0;
