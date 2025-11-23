@@ -1,0 +1,43 @@
+; PROGRAM 2: Read paragraph, print, search for word
+
+        LOC 100         ; start of paragraph in memory
+
+; --- PRINT SENTENCES ---
+        LDA 0,0,100     ; R0 = start address of paragraph
+PRINT_SENTENCES:
+        LDR 1,0,0       ; R1 = memory[R0]
+        OUT 1,1         ; send R1 to printer (device 1)
+        AIR 0,1         ; R0 = R0 + 1 (next word)
+        ; compare R0 with end address of paragraph (e.g., 160)
+        SMR 0,0,160
+        JNE 0,0,PRINT_SENTENCES
+
+; --- GET USER INPUT ---
+        IN 1,0          ; R1 = user input from keyboard (device 0)
+
+; --- SEARCH FOR WORD ---
+        LDA 0,0,100     ; R0 = start address of paragraph
+        LDA 2,0,0       ; R2 = sentence number
+SENT_LOOP:
+        LDA 3,0,0       ; R3 = word number in sentence
+WORD_LOOP:
+        LDR 4,0,0       ; R4 = memory[R0] (current word)
+        TRR 4,1         ; compare R4 with input R1
+        JZ 0,0,FOUND    ; if match, jump to FOUND
+        AIR 0,1         ; next word
+        AIR 3,1         ; next word in sentence
+        ; check end of sentence (example: 10 words per sentence)
+        SMR 3,0,10
+        JNE 3,0,WORD_LOOP
+        AIR 2,1         ; next sentence
+        ; check end of paragraph (example: 6 sentences)
+        SMR 2,0,6
+        JNE 2,0,SENT_LOOP
+
+        HLT             ; word not found
+
+FOUND:
+        OUT 1,1         ; print word
+        OUT 2,1         ; print sentence number
+        OUT 3,1         ; print word number
+        HLT

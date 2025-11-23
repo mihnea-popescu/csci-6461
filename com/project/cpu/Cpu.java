@@ -6,6 +6,8 @@ import com.project.memory.Cache;
 import com.project.memory.Memory;
 import com.project.memory.exceptions.MemoryAccessException;
 import com.project.util.Constants;
+import com.project.io.ConsoleIODevice;
+import com.project.io.PrinterIODevice;
 
 import java.util.Arrays;
 
@@ -47,6 +49,9 @@ public class Cpu {
         // Set up GPR and IXR registers
         Arrays.setAll(GPR, i -> new Register(16));
         Arrays.setAll(IXR, i -> new Register(16));
+        this.ioDeviceManager.saveDevice(0, new ConsoleIODevice()); // device ID 0
+        this.ioDeviceManager.saveDevice(1, new PrinterIODevice()); // device ID 1
+
 
         this.mem = mem;
         this.cache = new Cache(mem);
