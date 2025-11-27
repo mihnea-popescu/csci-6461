@@ -34,19 +34,21 @@ public class AssemblerSimulatorGUI {
     public Cpu cpu;
 
     public AssemblerSimulatorGUI() {
+
         mem = new Memory();
         cpu = new Cpu(mem);
         cpu.setPrinterCallback(msg -> SwingUtilities.invokeLater(() -> printer.append(msg + "\n")));
+
         JFrame frame = new JFrame("Assembler Simulator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 750);
         frame.setLayout(new BorderLayout());
 
-        // === Top panel for Registers ===
+        // === Top: Registers ===
         JPanel registerPanel = new JPanel(new GridLayout(4, 1));
         registerPanel.setBorder(BorderFactory.createTitledBorder("Registers"));
 
-        // GPRs
+        // --- GPRs ---
         JPanel gprPanel = new JPanel(new GridLayout(1, 4));
         gprPanel.setBorder(BorderFactory.createTitledBorder("GPR"));
         for (int i = 0; i < Constants.NUM_GPRS; i++) {
@@ -54,7 +56,7 @@ public class AssemblerSimulatorGUI {
             gprPanel.add(gprFields[i]);
         }
 
-        // IXRs
+        // --- IXRs ---
         JPanel ixrPanel = new JPanel(new GridLayout(1, 3));
         ixrPanel.setBorder(BorderFactory.createTitledBorder("IXR"));
         for (int i = 0; i < Constants.NUM_IXRS; i++) {
@@ -62,19 +64,20 @@ public class AssemblerSimulatorGUI {
             ixrPanel.add(ixrFields[i]);
         }
 
-        // Control Registers
-        JPanel controlRegPanel = new JPanel(new GridLayout(1, 4));
-        controlRegPanel.setBorder(BorderFactory.createTitledBorder("Control Registers"));
+        // --- Control Registers ---
+        JPanel controlPanel = new JPanel(new GridLayout(1, 4));
+        controlPanel.setBorder(BorderFactory.createTitledBorder("Control Registers"));
         pcField = new LabeledTextField("PC");
         marField = new LabeledTextField("MAR");
         mbrField = new LabeledTextField("MBR");
         irField = new LabeledTextField("IR");
-        controlRegPanel.add(pcField);
-        controlRegPanel.add(marField);
-        controlRegPanel.add(mbrField);
-        controlRegPanel.add(irField);
 
-        // CC and MFR
+        controlPanel.add(pcField);
+        controlPanel.add(marField);
+        controlPanel.add(mbrField);
+        controlPanel.add(irField);
+
+        // --- CC & MFR ---
         JPanel miscPanel = new JPanel(new GridLayout(1, 2));
         ccField = new LabeledTextField("CC");
         mfrField = new LabeledTextField("MFR");
@@ -83,23 +86,21 @@ public class AssemblerSimulatorGUI {
 
         registerPanel.add(gprPanel);
         registerPanel.add(ixrPanel);
-        registerPanel.add(controlRegPanel);
+        registerPanel.add(controlPanel);
         registerPanel.add(miscPanel);
 
         frame.add(registerPanel, BorderLayout.NORTH);
 
-        // === Center panel for memory, cache, input/output, and buttons ===
+        // === Center Panel ===
         JPanel centerPanel = new JPanel(new BorderLayout());
 
-        // === Memory & Cache Panel ===
+        // === Memory, Binary, Cache ===
         JPanel memoryPanel = new JPanel(new GridLayout(2, 2, 5, 5));
 
-        // Memory Content
         memoryContent = new JTextArea(10, 20);
         memoryContent.setBorder(BorderFactory.createTitledBorder("Memory Content"));
         memoryPanel.add(new JScrollPane(memoryContent));
 
-        // Binary/Octal Panel
         JPanel binaryPanel = new JPanel(new GridLayout(2, 1));
         octalInput = new JTextField();
         binaryOutput = new JTextField();
@@ -109,14 +110,11 @@ public class AssemblerSimulatorGUI {
         binaryPanel.add(binaryOutput);
         memoryPanel.add(binaryPanel);
 
-        // Cache Content
         cacheContent = new JTextArea(10, 20);
         cacheContent.setBorder(BorderFactory.createTitledBorder("Cache Content"));
         cacheContent.setEditable(false);
         memoryPanel.add(new JScrollPane(cacheContent));
-
-        // filler for grid balance
-        memoryPanel.add(new JPanel());
+        memoryPanel.add(new JPanel()); // filler
 
         centerPanel.add(memoryPanel, BorderLayout.CENTER);
 
@@ -156,34 +154,64 @@ public class AssemblerSimulatorGUI {
         buttonPanel.add(haltBtn);
         buttonPanel.add(iplBtn);
 
-        // Program file input
         programFile = new JTextField();
         programFile.setBorder(BorderFactory.createTitledBorder("Program File"));
 
-        JPanel controlPanel = new JPanel(new BorderLayout());
-        controlPanel.add(programFile, BorderLayout.NORTH);
-        controlPanel.add(buttonPanel, BorderLayout.CENTER);
+        JPanel lowerControls = new JPanel(new BorderLayout());
+        lowerControls.add(programFile, BorderLayout.NORTH);
+        lowerControls.add(buttonPanel, BorderLayout.CENTER);
 
-        centerPanel.add(controlPanel, BorderLayout.SOUTH);
+        centerPanel.add(lowerControls, BorderLayout.SOUTH);
         frame.add(centerPanel, BorderLayout.CENTER);
 
-        // === Bottom: Printer and Console Input ===
-        JPanel outputPanel = new JPanel(new GridLayout(1, 2));
+        // ====================================================================
+        // === Bottom 50/50 Panel: Printer (left) + Console Input (right) ====
+        // ====================================================================
+
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 2)); // 50%/50%
+
+        // LEFT: Printer
         printer = new JTextArea(5, 20);
         printer.setBorder(BorderFactory.createTitledBorder("Printer"));
         printer.setEditable(false);
+        bottomPanel.add(new JScrollPane(printer));
+
+        // RIGHT: I/O checkbox + console input
+        JPanel ioRightPanel = new JPanel(new BorderLayout());
+
+        JCheckBox ioCheckBox = new JCheckBox("I/O");
+        ioCheckBox.setSelected(true);
+        ioRightPanel.add(ioCheckBox, BorderLayout.NORTH);
+
         consoleInput = new JTextField();
         consoleInput.setBorder(BorderFactory.createTitledBorder("Console Input"));
+        ioRightPanel.add(consoleInput, BorderLayout.CENTER);
+
+        bottomPanel.add(ioRightPanel);
+
+        // Behavior
+        ioCheckBox.addActionListener(e -> {
+            boolean enabled = ioCheckBox.isSelected();
+            consoleInput.setEnabled(enabled);
+            for (int i = 0 ; i < 32;i++){
+                try{
+                    cpu.ioDeviceManager.getDevice(i).setReady(enabled);
+                } catch (Exception ex){
+                    break;
+                }
+                
+            }
+            if (!enabled) consoleInput.setText("");
+        });
+
         consoleInput.addActionListener(e -> {
             String text = consoleInput.getText();
             consoleInput.setText("");
             printer.append("User input: " + text + "\n");
-            cpu.provideInput(text); // send to CPU
+            cpu.provideInput(text);
         });
-        outputPanel.add(new JScrollPane(printer));
-        outputPanel.add(consoleInput);
 
-        frame.add(outputPanel, BorderLayout.SOUTH);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
 
         // Initialize display
         update_display();
@@ -191,25 +219,52 @@ public class AssemblerSimulatorGUI {
         frame.setVisible(true);
     }
 
+    public void loadTextFileToMemory(String filename) {
+        try {
+            // Read entire file as characters
+            String content = new String(java.nio.file.Files.readAllBytes(
+                    java.nio.file.Paths.get(filename)));
+
+            int memIndex = 1000;
+
+            for (char c : content.toCharArray()) {
+
+                // Write ASCII value into memory cell
+                cpu.mem.write(memIndex, (short) c);
+
+                memIndex++;
+
+                // Prevent memory overflow
+                if (memIndex >= cpu.mem.memoryCells.length) {
+                    printer.append("Error: Memory overflow while loading file.\n");
+                    return;
+                }
+            }
+
+            printer.append("Text file loaded into memory starting at index 1000.\n");
+            update_display();
+
+        } catch (Exception e) {
+            printer.append("Failed to load text file: " + e.getMessage() + "\n");
+        }
+    }
+
+
     private String toBinaryString(int value, int bits) {
         int mask = (1 << bits) - 1;
         return String.format("%" + bits + "s", Integer.toBinaryString(value & mask))
-                     .replace(' ', '0');
+                .replace(' ', '0');
     }
 
-    // === Display utility ===
     public void update_display() {
         memoryContent.setText(InputParser.MemToString(mem.memoryCells));
-        // cache display
         cacheContent.setText(CacheToString.cacheToString(cpu.cache));
 
-        for (int i = 0; i < Constants.NUM_GPRS; i++) {
+        for (int i = 0; i < Constants.NUM_GPRS; i++)
             gprFields[i].setText(toBinaryString(cpu.GPR[i].getValue(), 16));
-        }
 
-        for (int i = 0; i < Constants.NUM_IXRS; i++) {
+        for (int i = 0; i < Constants.NUM_IXRS; i++)
             ixrFields[i].setText(toBinaryString(cpu.IXR[i].getValue(), 16));
-        }
 
         pcField.setText(toBinaryString(cpu.PC.getValue(), 12));
         ccField.setText(toBinaryString(cpu.CC.getValue(), 4));
@@ -218,7 +273,6 @@ public class AssemblerSimulatorGUI {
         mfrField.setText(toBinaryString(cpu.MFR.getValue(), 4));
     }
 
-    // Only clear user input fields, not printer log
     public void clear() {
         octalInput.setText("");
         binaryOutput.setText("");
@@ -230,16 +284,12 @@ public class AssemblerSimulatorGUI {
         clear();
         String instruction = consoleInput.getText();
         int bin_input = InputParser.parseLine(instruction);
-        if (bin_input == -1) {
-            return;
-        }
-        else{
+        if (bin_input != -1) {
             binaryOutput.setText(Integer.toBinaryString(bin_input));
             octalInput.setText(Integer.toOctalString(bin_input));
             cpu.execute(InstructionDecoder.decode(bin_input));
         }
-        
-        printer.append("Load button clicked, load instruction into the CPU\n");
+        printer.append("Load button clicked, load instruction into CPU\n");
     }
 
     public void onLoadPlusClick() {
@@ -275,21 +325,16 @@ public class AssemblerSimulatorGUI {
         cpuThread.start();
     }
 
-
     public void onStepClick() {
         clear();
         printer.append("Step button clicked\n");
 
-        // Set PC from GUI before running
         cpu.PC.setValue(Integer.parseInt(pcField.getText(), 2));
         pcField.setText(toBinaryString(cpu.PC.getValue(), 12));
 
-        // Run CPU step in a separate thread
         new Thread(() -> {
             if (!cpu.halted) {
                 cpu.step();
-
-                // Update GUI safely on EDT
                 SwingUtilities.invokeLater(() -> {
                     printer.append("Step executed.\n");
                     update_display();
@@ -303,7 +348,6 @@ public class AssemblerSimulatorGUI {
         }).start();
     }
 
-
     public void onHaltClick() {
         clear();
         cpu.halted = true;
@@ -314,7 +358,6 @@ public class AssemblerSimulatorGUI {
         mem = new Memory();
         cpu = new Cpu(mem);
         cpu.setPrinterCallback(msg -> SwingUtilities.invokeLater(() -> printer.append(msg + "\n")));
-
         update_display();
     }
 
@@ -323,17 +366,21 @@ public class AssemblerSimulatorGUI {
         hardware_clear();
         printer.append("IPL button clicked\n");
         String input_file_name = programFile.getText();
+
         List<Integer> binaryCodes = InputParser.getBinaryCodes(input_file_name);
         if (binaryCodes == null) {
             printer.append("File not found.\n");
             return;
         }
+
         RomLoader.loadInstructionsInMemory(cpu, binaryCodes);
+        loadTextFileToMemory("file.txt");
         printer.append("Program loaded successfully.\n");
+
         update_display();
     }
 
-    // === LabeledTextField Inner Class ===
+    // === LabeledTextField ===
     class LabeledTextField extends JPanel {
         public final JTextField textField;
 
@@ -345,12 +392,8 @@ public class AssemblerSimulatorGUI {
             add(textField, BorderLayout.CENTER);
         }
 
-        public String getText() {
-            return textField.getText();
-        }
+        public String getText() { return textField.getText(); }
 
-        public void setText(String text) {
-            textField.setText(text);
-        }
+        public void setText(String text) { textField.setText(text); }
     }
 }
