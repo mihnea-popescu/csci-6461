@@ -219,6 +219,37 @@ public class AssemblerSimulatorGUI {
         frame.setVisible(true);
     }
 
+    public void loadTextFileToMemory(String filename) {
+        try {
+            // Read entire file as characters
+            String content = new String(java.nio.file.Files.readAllBytes(
+                    java.nio.file.Paths.get(filename)));
+
+            int memIndex = 1000;
+
+            for (char c : content.toCharArray()) {
+
+                // Write ASCII value into memory cell
+                cpu.mem.write(memIndex, (short) c);
+
+                memIndex++;
+
+                // Prevent memory overflow
+                if (memIndex >= cpu.mem.memoryCells.length) {
+                    printer.append("Error: Memory overflow while loading file.\n");
+                    return;
+                }
+            }
+
+            printer.append("Text file loaded into memory starting at index 1000.\n");
+            update_display();
+
+        } catch (Exception e) {
+            printer.append("Failed to load text file: " + e.getMessage() + "\n");
+        }
+    }
+
+
     private String toBinaryString(int value, int bits) {
         int mask = (1 << bits) - 1;
         return String.format("%" + bits + "s", Integer.toBinaryString(value & mask))
@@ -343,6 +374,7 @@ public class AssemblerSimulatorGUI {
         }
 
         RomLoader.loadInstructionsInMemory(cpu, binaryCodes);
+        loadTextFileToMemory("file.txt");
         printer.append("Program loaded successfully.\n");
 
         update_display();
